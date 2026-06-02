@@ -1,0 +1,8 @@
+services:
+  crm:
+    build: .
+    container_name: terra-spa-crm
+    env_file:
+      - .env.docker
+    ports:
+      - "8000:8000"
