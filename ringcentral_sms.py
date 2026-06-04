@@ -1,12 +1,13 @@
 from dotenv import load_dotenv
-import os
 import psycopg2
+load_dotenv()
+from database import get_db_connection
+
+import os
 
 from ringcentral import SDK
 
-load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 def get_platform():
@@ -44,7 +45,7 @@ def send_sms(to_number: str, message: str):
 
 
 def save_sms_message(client_id, phone, message, status, ringcentral_message_id):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(

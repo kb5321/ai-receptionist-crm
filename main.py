@@ -2,16 +2,21 @@ from fastapi import FastAPI, HTTPException,Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from ringcentral_sms import send_sms, save_sms_message
 
+from config import DATABASE_URL, OPENAI_API_KEY
+from auth import (
+    require_login,
+    require_admin,
+    require_role,
+    get_admin_role
+)
+
 from pydantic import BaseModel
 from openai import OpenAI
-from dotenv import load_dotenv
-import psycopg2
-import os
-import re
 from passlib.hash import pbkdf2_sha256
+import re
+import os
 
-
-load_dotenv()
+from database import get_db_connection
 
 app = FastAPI()
 
@@ -19,7 +24,7 @@ client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY")
 )
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+
 
 BUSINESS_KNOWLEDGE = """
 Business Name: Terra Spa
@@ -63,24 +68,9 @@ class LeadRequest(BaseModel):
         service: str
         preferred_time: str
 
-def require_login(request: Request):
-    return request.cookies.get("admin_logged_in") == "true"
-
-
-def get_admin_role(request: Request):
-    return request.cookies.get("admin_role")
-
-
-def require_role(request: Request, required_role: str):
-    return get_admin_role(request) == required_role
-
-
-def require_admin(request: Request):
-    return require_role(request, "admin")
-
 
 def save_message(role, content, session_id):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -97,7 +87,7 @@ def save_message(role, content, session_id):
 
 
 def load_recent_messages(session_id, limit=10):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -124,7 +114,7 @@ def load_recent_messages(session_id, limit=10):
     ]
 
 def save_lead(session_id, client_name, phone, service, preferred_time):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -141,7 +131,7 @@ def save_lead(session_id, client_name, phone, service, preferred_time):
     conn.close()
 
 def create_appointment_from_lead(lead_id):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -183,7 +173,7 @@ def create_appointment_from_lead(lead_id):
 
 def update_client_from_appointment(appointment_id):
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -303,7 +293,7 @@ def extract_lead_info(question):
     return client_name, phone, service, preferred_time
 
 def create_sms_message(phone, message, source):
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -323,7 +313,7 @@ def create_sms_message(phone, message, source):
 
 def create_client_note(client_id, note):
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -350,7 +340,7 @@ def save_audit_log(
 ):
     username = username_override or request.cookies.get("admin_username", "unknown")
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -425,7 +415,7 @@ def reset_password(
         new_password
     )
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -465,7 +455,7 @@ def admin_audit_log_page(request: Request):
             status_code=403
         )
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -576,7 +566,7 @@ def update_user_role(
         status_code=400
     )
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -612,7 +602,7 @@ def toggle_admin_user(request: Request, user_id: int):
     if not require_admin(request):
         return HTMLResponse("<h3>Access Denied</h3>", status_code=403)
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -645,7 +635,7 @@ def admin_users_page(request: Request):
             status_code=403
         )
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -841,7 +831,7 @@ def create_admin_user(
 
     password_hash = pbkdf2_sha256.hash(password)
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -915,13 +905,14 @@ def health():
     return {
         "status": "ok",
         "database_configured": DATABASE_URL is not None,
-        "openai_configured": os.getenv("OPENAI_API_KEY") is not None
+        "openai_configured": OPENAI_API_KEY is not None
     }
+
 
 @app.get("/messages")
 def get_messages():
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -956,7 +947,7 @@ def get_messages():
 @app.get("/messages/{session_id}")
 def get_messages_by_session(session_id: str):
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -994,7 +985,7 @@ def get_messages_by_session(session_id: str):
 @app.get("/sessions")
 def get_sessions():
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -1032,7 +1023,7 @@ def get_sessions():
 @app.delete("/sessions/{session_id}")
 def delete_session(session_id: str):
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -1216,7 +1207,7 @@ def create_lead(request: LeadRequest):
 @app.get("/leads")
 def get_leads():
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -1415,7 +1406,7 @@ def admin_login(
     password: str = Form(...)
 ):
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -1616,7 +1607,7 @@ def leads_admin_page(request: Request):
 @app.put("/leads/{lead_id}/status")
 def update_lead_status(lead_id: int, status: str):
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -1648,7 +1639,7 @@ def update_lead_status(lead_id: int, status: str):
 @app.get("/appointments")
 def get_appointments():
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -1790,7 +1781,7 @@ def leads_admin_page(request: Request):
 @app.put("/appointments/{appointment_id}/status")
 def update_appointment_status(appointment_id: int, status: str):
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -1816,7 +1807,7 @@ def update_appointment_status(appointment_id: int, status: str):
     sms_created = False
 
     if status == "confirmed":
-        conn = psycopg2.connect(DATABASE_URL)
+        conn = get_db_connection()
         cur = conn.cursor()
 
         cur.execute(
@@ -1865,7 +1856,7 @@ def update_appointment_status(appointment_id: int, status: str):
 @app.get("/clients")
 def get_clients(search: str = ""):
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     if search:
@@ -1915,7 +1906,7 @@ def get_clients(search: str = ""):
 @app.get("/clients/stats")
 def get_client_stats():
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -2151,7 +2142,7 @@ def client_profile_page(client_id: int, request: Request):
     if not require_login(request):
         return RedirectResponse(url="/admin/login", status_code=302)
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -2642,7 +2633,7 @@ def client_profile_page(client_id: int, request: Request):
 @app.get("/sms")
 def get_sms_messages():
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -2822,7 +2813,7 @@ def sms_admin_page(request: Request):
 @app.put("/sms/{sms_id}/status")
 def update_sms_status(sms_id: int, status: str):
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -2851,7 +2842,7 @@ def update_sms_status(sms_id: int, status: str):
 @app.get("/sms/stats")
 def get_sms_stats():
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -2886,7 +2877,7 @@ def get_sms_stats():
 @app.post("/sms/send-pending")
 def send_pending_sms():
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -2912,7 +2903,7 @@ def send_pending_sms():
 @app.delete("/client-notes/{note_id}")
 def delete_client_note(note_id: int):
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -2939,7 +2930,7 @@ def delete_client_note(note_id: int):
 @app.get("/clients/top")
 def get_top_clients():
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -2978,7 +2969,7 @@ def get_top_clients():
 @app.get("/sms-messages/{message_id}")
 def get_sms_message(message_id: int):
 
-    conn = psycopg2.connect(DATABASE_URL)
+    conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
