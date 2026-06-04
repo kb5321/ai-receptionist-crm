@@ -17,12 +17,16 @@ import re
 import os
 
 from database import get_db_connection
+from routers import users
+
 
 app = FastAPI()
 
 client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY")
 )
+
+app.include_router(users.router)
 
 
 
