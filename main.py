@@ -19,8 +19,10 @@ import os
 from database import get_db_connection
 from routers import users
 from routers import clients
+from routers import leads
 
 from audit import save_audit_log
+
 
 
 app = FastAPI()
@@ -31,6 +33,7 @@ client = OpenAI(
 
 app.include_router(users.router)
 app.include_router(clients.router)
+app.include_router(leads.router)
 
 
 
@@ -68,13 +71,6 @@ Important Rules:
 class AskRequest(BaseModel):
     session_id: str
     question: str
-
-class LeadRequest(BaseModel):
-        session_id: str
-        client_name: str
-        phone: str
-        service: str
-        preferred_time: str
 
 
 def save_message(role, content, session_id):
@@ -138,46 +134,7 @@ def save_lead(session_id, client_name, phone, service, preferred_time):
     cur.close()
     conn.close()
 
-def create_appointment_from_lead(lead_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
 
-    cur.execute(
-        """
-        SELECT id, client_name, phone, service, preferred_time
-        FROM spa_leads
-        WHERE id = %s
-        """,
-        (lead_id,)
-    )
-
-    lead = cur.fetchone()
-
-    if lead is None:
-        cur.close()
-        conn.close()
-        return False
-
-    cur.execute(
-        """
-        INSERT INTO appointments
-        (lead_id, client_name, phone, service, appointment_time)
-        VALUES (%s, %s, %s, %s, %s)
-        """,
-        (
-            lead[0],
-            lead[1],
-            lead[2],
-            lead[3],
-            lead[4]
-        )
-    )
-
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    return True    
 
 def update_client_from_appointment(appointment_id):
 
@@ -712,64 +669,7 @@ def chat_page():
     </body>
     </html>
     """
-@app.post("/leads")
-def create_lead(request: LeadRequest):
 
-    save_lead(
-        request.session_id,
-        request.client_name,
-        request.phone,
-        request.service,
-        request.preferred_time
-    )
-
-    return {
-        "message": "Lead saved successfully",
-        "lead": {
-            "session_id": request.session_id,
-            "client_name": request.client_name,
-            "phone": request.phone,
-            "service": request.service,
-            "preferred_time": request.preferred_time
-        }
-    }
-@app.get("/leads")
-def get_leads():
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute(
-        """
-        SELECT id, session_id, client_name, phone, service, preferred_time, status, created_at
-        FROM spa_leads
-        ORDER BY created_at DESC
-        """
-    )
-
-    rows = cur.fetchall()
-
-    cur.close()
-    conn.close()
-
-    leads = []
-
-    for row in rows:
-        leads.append({
-            "id": row[0],
-            "session_id": row[1],
-            "client_name": row[2],
-            "phone": row[3],
-            "service": row[4],
-            "preferred_time": row[5],
-            "status": row[6],
-            "created_at": str(row[7])
-        })
-
-    return {
-        "total_leads": len(leads),
-        "leads": leads
-    }
 
 @app.get("/admin", response_class=HTMLResponse)
 def admin_home(request: Request):
@@ -1016,154 +916,6 @@ def admin_login(
 
     return response
 
-
-@app.get("/admin/leads", response_class=HTMLResponse)
-def leads_admin_page(request: Request):
-    if not require_login(request):
-        return RedirectResponse(url="/admin/login", status_code=302)
-
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Terra Spa Leads</title>
-
-        <style>
-            body {
-                font-family: Arial;
-                margin: 40px;
-            }
-
-            table {
-                border-collapse: collapse;
-                width: 100%;
-            }
-
-            th, td {
-                border: 1px solid #ccc;
-                padding: 8px;
-                text-align: left;
-            }
-
-            th {
-                background-color: #f2f2f2;
-            }
-
-            h2 {
-                margin-bottom: 20px;
-            }
-        </style>
-    </head>
-
-    <body>
-
-        <div style="margin-bottom:20px;">
-            <a href="/admin">🏠 Admin Home</a>
-            &nbsp;&nbsp;&nbsp;
-            <a href="/admin/logout">Logout</a>
-        </div>
-
-        
-        <h2>Terra Spa Lead Dashboard</h2>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Client Name</th>
-                    <th>Phone</th>
-                    <th>Service</th>
-                    <th>Preferred Time</th>
-                    <th>Session ID</th>
-                    <th>Status</th>
-                    <th>Created At</th>
-                </tr>
-            </thead>
-
-            <tbody id="leadsTable">
-            </tbody>
-        </table>
-
-        <script>
-            async function loadLeads() {
-                const response = await fetch("/leads");
-                const data = await response.json();
-
-                const table = document.getElementById("leadsTable");
-                table.innerHTML = "";
-
-                data.leads.forEach(lead => {
-                    const row = document.createElement("tr");
-
-                    row.innerHTML = `
-                        <tr>
-                            <td>${lead.id}</td>
-                            <td>${lead.client_name}</td>
-                            <td>${lead.phone}</td>
-                            <td>${lead.service}</td>
-                            <td>${lead.preferred_time}</td>
-                            <td>${lead.session_id}</td>
-                            <td>
-                                <select onchange="updateStatus(${lead.id}, this.value)">
-                                    <option value="new" ${lead.status === "new" ? "selected" : ""}>new</option>
-                                    <option value="contacted" ${lead.status === "contacted" ? "selected" : ""}>contacted</option>
-                                    <option value="booked" ${lead.status === "booked" ? "selected" : ""}>booked</option>
-                                    <option value="closed" ${lead.status === "closed" ? "selected" : ""}>closed</option>
-                                </select>
-                            </td>
-                            <td>${lead.created_at}</td>
-                        </tr>
-                    `;
-
-                    table.appendChild(row);
-                });
-            }
-
-            loadLeads();
-
-            async function updateStatus(leadId, status) {
-                await fetch(`/leads/${leadId}/status?status=${status}`, {
-                    method: "PUT"
-                });
-
-                loadLeads();
-            }
-        </script>
-    </body>
-    </html>
-    """
-
-@app.put("/leads/{lead_id}/status")
-def update_lead_status(lead_id: int, status: str):
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute(
-        """
-        UPDATE spa_leads
-        SET status = %s
-        WHERE id = %s
-        """,
-        (status, lead_id)
-    )
-
-    conn.commit()
-
-    appointment_created = False
-
-    if status == "booked":
-        appointment_created = create_appointment_from_lead(lead_id)
-
-        cur.close()
-        conn.close()
-
-    return {
-        "message": "Lead status updated",
-        "lead_id": lead_id,
-        "new_status": status,
-        "appointment_created": appointment_created
-    }
 
 @app.get("/appointments")
 def get_appointments():
