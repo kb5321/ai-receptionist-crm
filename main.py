@@ -22,6 +22,7 @@ from routers import clients
 from routers import leads
 
 from audit import save_audit_log
+from services.lead_service import save_lead
 
 
 
@@ -117,22 +118,22 @@ def load_recent_messages(session_id, limit=10):
         for role, content in rows
     ]
 
-def save_lead(session_id, client_name, phone, service, preferred_time):
-    conn = get_db_connection()
-    cur = conn.cursor()
+# def save_lead(session_id, client_name, phone, service, preferred_time):
+#     conn = get_db_connection()
+#     cur = conn.cursor()
 
-    cur.execute(
-        """
-        INSERT INTO spa_leads
-        (session_id, client_name, phone, service, preferred_time)
-        VALUES (%s, %s, %s, %s, %s)
-        """,
-        (session_id, client_name, phone, service, preferred_time)
-    )
+#     cur.execute(
+#         """
+#         INSERT INTO spa_leads
+#         (session_id, client_name, phone, service, preferred_time)
+#         VALUES (%s, %s, %s, %s, %s)
+#         """,
+#         (session_id, client_name, phone, service, preferred_time)
+#     )
 
-    conn.commit()
-    cur.close()
-    conn.close()
+#     conn.commit()
+#     cur.close()
+#     conn.close()
 
 
 
