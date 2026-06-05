@@ -20,6 +20,7 @@ from database import get_db_connection
 from routers import users
 from routers import clients
 from routers import leads
+from routers import appointments
 
 from audit import save_audit_log
 from services.lead_service import save_lead
@@ -35,6 +36,7 @@ client = OpenAI(
 app.include_router(users.router)
 app.include_router(clients.router)
 app.include_router(leads.router)
+app.include_router(appointments.router)
 
 
 
@@ -137,96 +139,96 @@ def load_recent_messages(session_id, limit=10):
 
 
 
-def update_client_from_appointment(appointment_id):
+# def update_client_from_appointment(appointment_id):
 
-    conn = get_db_connection()
-    cur = conn.cursor()
+#     conn = get_db_connection()
+#     cur = conn.cursor()
 
-    cur.execute(
-        """
-        SELECT
-            client_name,
-            phone,
-            service
-        FROM appointments
-        WHERE id = %s
-        """,
-        (appointment_id,)
-    )
+#     cur.execute(
+#         """
+#         SELECT
+#             client_name,
+#             phone,
+#             service
+#         FROM appointments
+#         WHERE id = %s
+#         """,
+#         (appointment_id,)
+#     )
 
-    appointment = cur.fetchone()
+#     appointment = cur.fetchone()
 
-    if appointment is None:
-        cur.close()
-        conn.close()
-        return False
+#     if appointment is None:
+#         cur.close()
+#         conn.close()
+#         return False
 
-    client_name = appointment[0]
-    phone = appointment[1]
-    service = appointment[2]
+#     client_name = appointment[0]
+#     phone = appointment[1]
+#     service = appointment[2]
 
-    cur.execute(
-        """
-        SELECT id, total_visits
-        FROM clients
-        WHERE phone = %s
-        """,
-        (phone,)
-    )
+#     cur.execute(
+#         """
+#         SELECT id, total_visits
+#         FROM clients
+#         WHERE phone = %s
+#         """,
+#         (phone,)
+#     )
 
-    existing_client = cur.fetchone()
+#     existing_client = cur.fetchone()
 
-    if existing_client:
+#     if existing_client:
 
-        client_id = existing_client[0]
-        visits = existing_client[1] + 1
+#         client_id = existing_client[0]
+#         visits = existing_client[1] + 1
 
-        cur.execute(
-            """
-            UPDATE clients
-            SET
-                total_visits = %s,
-                last_service = %s,
-                last_appointment_date = CURRENT_TIMESTAMP
-            WHERE id = %s
-            """,
-            (visits, service, client_id)
-        )
+#         cur.execute(
+#             """
+#             UPDATE clients
+#             SET
+#                 total_visits = %s,
+#                 last_service = %s,
+#                 last_appointment_date = CURRENT_TIMESTAMP
+#             WHERE id = %s
+#             """,
+#             (visits, service, client_id)
+#         )
 
-    else:
+#     else:
 
-        cur.execute(
-            """
-            INSERT INTO clients
-            (
-                client_name,
-                phone,
-                total_visits,
-                last_service,
-                last_appointment_date
-            )
-            VALUES
-            (
-                %s,
-                %s,
-                1,
-                %s,
-                CURRENT_TIMESTAMP
-            )
-            """,
-            (
-                client_name,
-                phone,
-                service
-            )
-        )
+#         cur.execute(
+#             """
+#             INSERT INTO clients
+#             (
+#                 client_name,
+#                 phone,
+#                 total_visits,
+#                 last_service,
+#                 last_appointment_date
+#             )
+#             VALUES
+#             (
+#                 %s,
+#                 %s,
+#                 1,
+#                 %s,
+#                 CURRENT_TIMESTAMP
+#             )
+#             """,
+#             (
+#                 client_name,
+#                 phone,
+#                 service
+#             )
+#         )
 
-    conn.commit()
+#     conn.commit()
 
-    cur.close()
-    conn.close()
+#     cur.close()
+#     conn.close()
 
-    return True
+#     return True
 
 def extract_lead_info(question):
     text = question.lower()
@@ -258,24 +260,24 @@ def extract_lead_info(question):
 
     return client_name, phone, service, preferred_time
 
-def create_sms_message(phone, message, source):
-    conn = get_db_connection()
-    cur = conn.cursor()
+# def create_sms_message(phone, message, source):
+#     conn = get_db_connection()
+#     cur = conn.cursor()
 
-    cur.execute(
-        """
-        INSERT INTO sms_messages
-        (phone, message, source)
-        VALUES (%s, %s, %s)
-        """,
-        (phone, message, source)
-    )
+#     cur.execute(
+#         """
+#         INSERT INTO sms_messages
+#         (phone, message, source)
+#         VALUES (%s, %s, %s)
+#         """,
+#         (phone, message, source)
+#     )
 
-    conn.commit()
-    cur.close()
-    conn.close()
+#     conn.commit()
+#     cur.close()
+#     conn.close()
 
-    return True
+#     return True
 
 
 
@@ -918,222 +920,222 @@ def admin_login(
     return response
 
 
-@app.get("/appointments")
-def get_appointments():
+# @app.get("/appointments")
+# def get_appointments():
 
-    conn = get_db_connection()
-    cur = conn.cursor()
+#     conn = get_db_connection()
+#     cur = conn.cursor()
 
-    cur.execute(
-        """
-        SELECT
-        id,
-        lead_id,
-        client_name,
-        phone,
-        service,
-        appointment_time,
-        status,
-        created_at
-        FROM appointments
-        ORDER BY created_at DESC
-        """
-    )
+#     cur.execute(
+#         """
+#         SELECT
+#         id,
+#         lead_id,
+#         client_name,
+#         phone,
+#         service,
+#         appointment_time,
+#         status,
+#         created_at
+#         FROM appointments
+#         ORDER BY created_at DESC
+#         """
+#     )
 
-    rows = cur.fetchall()
+#     rows = cur.fetchall()
 
-    cur.close()
-    conn.close()
+#     cur.close()
+#     conn.close()
 
-    appointments = []
+#     appointments = []
 
-    for row in rows:
-        appointments.append({
-            "id": row[0],
-            "lead_id": row[1],
-            "client_name": row[2],
-            "phone": row[3],
-            "service": row[4],
-            "appointment_time": row[5],
-             "status": row[6],
-            "created_at": str(row[7])
-        })
+#     for row in rows:
+#         appointments.append({
+#             "id": row[0],
+#             "lead_id": row[1],
+#             "client_name": row[2],
+#             "phone": row[3],
+#             "service": row[4],
+#             "appointment_time": row[5],
+#              "status": row[6],
+#             "created_at": str(row[7])
+#         })
 
-    return {
-        "total_appointments": len(appointments),
-        "appointments": appointments
-    }
+#     return {
+#         "total_appointments": len(appointments),
+#         "appointments": appointments
+#     }
 
-@app.get("/admin/appointments", response_class=HTMLResponse)
-def leads_admin_page(request: Request):
-    if not require_login(request):
-        return RedirectResponse(url="/admin/login", status_code=302)
-    return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Terra Spa Appointments</title>
-        <style>
-            body { font-family: Arial; margin: 40px; }
-            table { border-collapse: collapse; width: 100%; }
-            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-            th { background-color: #f2f2f2; }
-        </style>
-    </head>
-    <body>
-        <div style="margin-bottom:20px;">
-            <a href="/admin">🏠 Admin Home</a>
-            &nbsp;&nbsp;&nbsp;
-            <a href="/admin/logout">Logout</a>
-        </div>
-        <h2>Terra Spa Appointments</h2>
+# @app.get("/admin/appointments", response_class=HTMLResponse)
+# def leads_admin_page(request: Request):
+#     if not require_login(request):
+#         return RedirectResponse(url="/admin/login", status_code=302)
+#     return """
+#     <!DOCTYPE html>
+#     <html>
+#     <head>
+#         <title>Terra Spa Appointments</title>
+#         <style>
+#             body { font-family: Arial; margin: 40px; }
+#             table { border-collapse: collapse; width: 100%; }
+#             th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+#             th { background-color: #f2f2f2; }
+#         </style>
+#     </head>
+#     <body>
+#         <div style="margin-bottom:20px;">
+#             <a href="/admin">🏠 Admin Home</a>
+#             &nbsp;&nbsp;&nbsp;
+#             <a href="/admin/logout">Logout</a>
+#         </div>
+#         <h2>Terra Spa Appointments</h2>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Lead ID</th>
-                    <th>Client Name</th>
-                    <th>Phone</th>
-                    <th>Service</th>
-                    <th>Appointment Time</th>
-                    <th>Status</th>
-                    <th>Created At</th>
-                </tr>
-            </thead>
-            <tbody id="appointmentsTable"></tbody>
-        </table>
+#         <table>
+#             <thead>
+#                 <tr>
+#                     <th>ID</th>
+#                     <th>Lead ID</th>
+#                     <th>Client Name</th>
+#                     <th>Phone</th>
+#                     <th>Service</th>
+#                     <th>Appointment Time</th>
+#                     <th>Status</th>
+#                     <th>Created At</th>
+#                 </tr>
+#             </thead>
+#             <tbody id="appointmentsTable"></tbody>
+#         </table>
 
-        <script>
-            async function loadAppointments() {
-                const response = await fetch("/appointments");
-                const data = await response.json();
+#         <script>
+#             async function loadAppointments() {
+#                 const response = await fetch("/appointments");
+#                 const data = await response.json();
 
-                const table = document.getElementById("appointmentsTable");
-                table.innerHTML = "";
+#                 const table = document.getElementById("appointmentsTable");
+#                 table.innerHTML = "";
 
-                data.appointments.forEach(appt => {
-                    const row = document.createElement("tr");
+#                 data.appointments.forEach(appt => {
+#                     const row = document.createElement("tr");
 
-                    row.innerHTML = `
-                        <td>${appt.id}</td>
-                        <td>${appt.lead_id}</td>
-                        <td>${appt.client_name}</td>
-                        <td>${appt.phone}</td>
-                        <td>${appt.service}</td>
-                        <td>${appt.appointment_time}</td>
+#                     row.innerHTML = `
+#                         <td>${appt.id}</td>
+#                         <td>${appt.lead_id}</td>
+#                         <td>${appt.client_name}</td>
+#                         <td>${appt.phone}</td>
+#                         <td>${appt.service}</td>
+#                         <td>${appt.appointment_time}</td>
 
-                        <td>
-                            <select onchange="updateAppointmentStatus(${appt.id}, this.value)">
-                                <option value="scheduled" ${appt.status === "scheduled" ? "selected" : ""}>scheduled</option>
-                                <option value="confirmed" ${appt.status === "confirmed" ? "selected" : ""}>confirmed</option>
-                                <option value="checked_in" ${appt.status === "checked_in" ? "selected" : ""}>checked_in</option>
-                                <option value="completed" ${appt.status === "completed" ? "selected" : ""}>completed</option>
-                                <option value="cancelled" ${appt.status === "cancelled" ? "selected" : ""}>cancelled</option>
-                                <option value="no_show" ${appt.status === "no_show" ? "selected" : ""}>no_show</option>
-                            </select>
-                        </td>
-
-
-                        <td>${appt.created_at}</td>
-                    `;
-
-                    table.appendChild(row);
-                });
-            }
-
-            loadAppointments();
-            async function updateAppointmentStatus(appointmentId, status) {
-
-                await fetch(
-                    `/appointments/${appointmentId}/status?status=${status}`,
-                    {
-                        method: "PUT"
-                    }
-                );
-
-                loadAppointments();
-            }
-
-        </script>
-    </body>
-    </html>
-    """
-
-@app.put("/appointments/{appointment_id}/status")
-def update_appointment_status(appointment_id: int, status: str):
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute(
-        """
-        UPDATE appointments
-        SET status = %s
-        WHERE id = %s
-        """,
-        (status, appointment_id)
-    )
-
-    updated_count = cur.rowcount
-
-    conn.commit()
-
-    client_updated = False
-
-    if status == "completed":
-        client_updated = update_client_from_appointment(
-            appointment_id
-        )
-
-    sms_created = False
-
-    if status == "confirmed":
-        conn = get_db_connection()
-        cur = conn.cursor()
-
-        cur.execute(
-            """
-            SELECT client_name, phone, service, appointment_time
-            FROM appointments
-            WHERE id = %s
-            """,
-            (appointment_id,)
-        )
-
-        appointment = cur.fetchone()
-
-        cur.close()
-        conn.close()
-
-        if appointment:
-            client_name = appointment[0]
-            phone = appointment[1]
-            service = appointment[2]
-            appointment_time = appointment[3]
-
-            message = (
-                f"Hi {client_name}, your Terra Spa {service} appointment "
-                f"request for {appointment_time} has been confirmed."
-            )
-
-            create_sms_message(
-                phone,
-                message,
-                "appointment_confirmed"
-            )
-
-            sms_created = True
+#                         <td>
+#                             <select onchange="updateAppointmentStatus(${appt.id}, this.value)">
+#                                 <option value="scheduled" ${appt.status === "scheduled" ? "selected" : ""}>scheduled</option>
+#                                 <option value="confirmed" ${appt.status === "confirmed" ? "selected" : ""}>confirmed</option>
+#                                 <option value="checked_in" ${appt.status === "checked_in" ? "selected" : ""}>checked_in</option>
+#                                 <option value="completed" ${appt.status === "completed" ? "selected" : ""}>completed</option>
+#                                 <option value="cancelled" ${appt.status === "cancelled" ? "selected" : ""}>cancelled</option>
+#                                 <option value="no_show" ${appt.status === "no_show" ? "selected" : ""}>no_show</option>
+#                             </select>
+#                         </td>
 
 
-    return {
-        "message": "Appointment status updated",
-        "appointment_id": appointment_id,
-        "new_status": status,
-        "updated_count": updated_count,
-        "client_updated": client_updated,
-        "sms_created": sms_created
-    }
+#                         <td>${appt.created_at}</td>
+#                     `;
+
+#                     table.appendChild(row);
+#                 });
+#             }
+
+#             loadAppointments();
+#             async function updateAppointmentStatus(appointmentId, status) {
+
+#                 await fetch(
+#                     `/appointments/${appointmentId}/status?status=${status}`,
+#                     {
+#                         method: "PUT"
+#                     }
+#                 );
+
+#                 loadAppointments();
+#             }
+
+#         </script>
+#     </body>
+#     </html>
+#     """
+
+# @app.put("/appointments/{appointment_id}/status")
+# def update_appointment_status(appointment_id: int, status: str):
+
+#     conn = get_db_connection()
+#     cur = conn.cursor()
+
+#     cur.execute(
+#         """
+#         UPDATE appointments
+#         SET status = %s
+#         WHERE id = %s
+#         """,
+#         (status, appointment_id)
+#     )
+
+#     updated_count = cur.rowcount
+
+#     conn.commit()
+
+#     client_updated = False
+
+#     if status == "completed":
+#         client_updated = update_client_from_appointment(
+#             appointment_id
+#         )
+
+#     sms_created = False
+
+#     if status == "confirmed":
+#         conn = get_db_connection()
+#         cur = conn.cursor()
+
+#         cur.execute(
+#             """
+#             SELECT client_name, phone, service, appointment_time
+#             FROM appointments
+#             WHERE id = %s
+#             """,
+#             (appointment_id,)
+#         )
+
+#         appointment = cur.fetchone()
+
+#         cur.close()
+#         conn.close()
+
+#         if appointment:
+#             client_name = appointment[0]
+#             phone = appointment[1]
+#             service = appointment[2]
+#             appointment_time = appointment[3]
+
+#             message = (
+#                 f"Hi {client_name}, your Terra Spa {service} appointment "
+#                 f"request for {appointment_time} has been confirmed."
+#             )
+
+#             create_sms_message(
+#                 phone,
+#                 message,
+#                 "appointment_confirmed"
+#             )
+
+#             sms_created = True
+
+
+#     return {
+#         "message": "Appointment status updated",
+#         "appointment_id": appointment_id,
+#         "new_status": status,
+#         "updated_count": updated_count,
+#         "client_updated": client_updated,
+#         "sms_created": sms_created
+#     }
 
 @app.get("/clients")
 def get_clients(search: str = ""):
