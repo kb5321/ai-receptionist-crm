@@ -28,6 +28,12 @@ from routers import audit_router
 from audit import save_audit_log
 from services.lead_service import save_lead
 
+# =====================================
+# Application Version
+# =====================================
+
+APP_VERSION = "2026.06.07.01"
+
 
 
 app = FastAPI()
@@ -168,6 +174,14 @@ def health():
         "status": "ok",
         "database_configured": DATABASE_URL is not None,
         "openai_configured": OPENAI_API_KEY is not None
+    }
+
+@app.get("/version")
+def version():
+    return {
+        "app": "Terra Spa CRM",
+        "version": APP_VERSION,
+        "environment": "production"
     }
 
 
