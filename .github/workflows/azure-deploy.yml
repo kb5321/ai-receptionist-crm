@@ -1,0 +1,42 @@
+name: Deploy Terra Spa CRM to Azure
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: terraspacrmacr.azurecr.io
+          username: ${{ terraspacrmacr }}
+          password: ${{ 7YMKT3m7VBqgIZ2R7wDEA2g2bMoBOYMAc3WsP2Nw68pJM5IdgFtyJQQJ99CFACLArgHEqg7NAAACAZCR10i3 }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t terraspacrmacr.azurecr.io/hello-ai-crm:latest .
+
+      - name: Push Docker image to ACR
+        run: |
+          docker push terraspacrmacr.azurecr.io/hello-ai-crm:latest
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ YFz8Q~kG0aflIQ~J_2eZPDCBWh0nYuzsKvTJRdeo }}
+
+      - name: Restart Azure Web App
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az webapp restart \
+              --name terra-spa-crm-app \
+              --resource-group rg-terra-spa-crm
