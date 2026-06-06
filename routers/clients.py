@@ -22,6 +22,64 @@ def test_clients():
     return {"status": "clients router working"}
 
 # =====================================
+# Client API Routes
+# =====================================
+
+@router.get("/clients")
+def get_clients(search: str = ""):
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    if search:
+        cur.execute(
+            """
+            SELECT id, client_name, phone, email, total_visits, last_service, last_appointment_date, created_at
+            FROM clients
+            WHERE client_name ILIKE %s
+            OR phone ILIKE %s
+            ORDER BY created_at DESC
+            """,
+            (f"%{search}%", f"%{search}%")
+        )
+    else:
+        cur.execute(
+            """
+            SELECT id, client_name, phone, email, total_visits, last_service, last_appointment_date, created_at
+            FROM clients
+            ORDER BY created_at DESC
+            """
+        )
+
+    rows = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    clients = []
+
+    for row in rows:
+        clients.append({
+            "id": row[0],
+            "client_name": row[1],
+            "phone": row[2],
+            "email": row[3],
+            "total_visits": row[4],
+            "last_service": row[5],
+            "last_appointment_date": str(row[6]),
+            "created_at": str(row[7])
+        })
+
+    return {
+        "total_clients": len(clients),
+        "clients": clients
+    }
+
+
+
+
+
+# =====================================
 # Client Dashboard / Reports
 # =====================================
 
@@ -96,8 +154,10 @@ def get_client_stats():
 
 
 
+
+
 # =====================================
-# Client Pages
+# Client Admin Pages
 # =====================================
 
 @router.get("/admin/clients", response_class=HTMLResponse)
@@ -842,3 +902,32 @@ def add_client_note(
         url=f"/admin/clients/{client_id}",
         status_code=302
     )
+
+@router.delete("/client-notes/{note_id}")
+def delete_client_note(note_id: int):
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        DELETE FROM client_notes
+        WHERE id = %s
+        """,
+        (note_id,)
+    )
+
+    deleted_count = cur.rowcount
+
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    return {
+        "message": "Note deleted",
+        "note_id": note_id,
+        "deleted_count": deleted_count
+    }
+
+
