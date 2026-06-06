@@ -17,8 +17,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: terraspacrmacr.azurecr.io
-          username: ${{terraspacrmacr}}
-          password: ${{7YMKT3m7VBqgIZ2R7wDEA2g2bMoBOYMAc3WsP2Nw68pJM5IdgFtyJQQJ99CFACLArgHEqg7NAAACAZCR10i3}}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
 
       - name: Build Docker image
         run: |
@@ -31,7 +31,7 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          creds: ${{YFz8Q~kG0aflIQ~J_2eZPDCBWh0nYuzsKvTJRdeo}}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Restart Azure Web App
         uses: azure/cli@v2
