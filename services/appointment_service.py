@@ -252,6 +252,7 @@ def update_appointment_status_service(appointment_id: int, status: str):
             sms_created = False
             sms_sent = False
 
+
             try:
                 result = send_sms(phone, message)
 
