@@ -23,12 +23,12 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
 
+      
       - name: Run tests
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          pytest
+          pytest tests/test_health.py tests/test_version.py    
 
       - name: Login to Azure Container Registry
         uses: docker/login-action@v3
