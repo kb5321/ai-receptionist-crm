@@ -10,7 +10,7 @@ from main import app
 
 client = TestClient(app)
 
-
+#Does endpoint work?
 def test_health():
     response = client.get("/health")
 
@@ -18,4 +18,4 @@ def test_health():
 
     data = response.json()
 
-    assert data["status"] == "ok"
+    assert data["status"] == "ok" # Does endpoint work?
