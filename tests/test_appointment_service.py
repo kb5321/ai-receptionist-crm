@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
+import pytest
+
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 sys.path.append(str(ROOT_DIR))
@@ -10,7 +12,18 @@ from services.appointment_service import (
 )
 
 
-def test_update_appointment_status_checked_in_no_sms():
+@pytest.fixture
+def mock_db():
+    mock_conn = MagicMock()
+    mock_cur = MagicMock()
+
+    mock_conn.cursor.return_value = mock_cur
+    mock_cur.rowcount = 1
+
+    return mock_conn, mock_cur
+
+
+def test_update_appointment_status_checked_in_no_sms(mock_db):
     """
     Purpose:
         Verify that changing an appointment status to
@@ -58,11 +71,7 @@ def test_update_appointment_status_checked_in_no_sms():
         without touching production systems.
     """
 
-    mock_conn = MagicMock()
-    mock_cur = MagicMock()
-
-    mock_conn.cursor.return_value = mock_cur
-    mock_cur.rowcount = 1
+    mock_conn, mock_cur = mock_db
 
     with patch(
         "services.appointment_service.get_db_connection",
@@ -92,8 +101,58 @@ def test_update_appointment_status_checked_in_no_sms():
 
         mock_update_client.assert_not_called()
 
+        
 
-def test_completed_status_updates_client():
+@pytest.mark.parametrize(
+    "status",
+    [
+        "scheduled",
+        "checked_in",
+        "cancelled",
+        "no_show"
+    ]
+)
+
+def test_non_confirmed_status_does_not_send_sms(mock_db, status):
+    """
+    Purpose:
+        Verify that statuses other than 'confirmed'
+        do not send SMS messages.
+
+    Business Rule:
+        Only confirmed appointments send SMS.
+
+    Test Type:
+        Parameterized Unit Test
+        Service Test
+        Business Rule Test
+    """
+
+    mock_conn, mock_cur = mock_db
+
+    with patch(
+        "services.appointment_service.get_db_connection",
+        return_value=mock_conn
+    ), patch(
+        "services.appointment_service.send_sms"
+    ) as mock_send_sms, patch(
+        "services.appointment_service.update_client_from_appointment"
+    ) as mock_update_client:
+
+        result = update_appointment_status_service(
+            appointment_id=3,
+            status=status
+        )
+
+        assert result["new_status"] == status
+        assert result["sms_created"] is False
+        assert result["sms_sent"] is False
+
+        mock_send_sms.assert_not_called()
+
+
+
+def test_completed_status_updates_client(mock_db):
     """
     Purpose:
         Verify that completed appointments update
@@ -112,11 +171,7 @@ def test_completed_status_updates_client():
         Business Rule Test
     """
 
-    mock_conn = MagicMock()
-    mock_cur = MagicMock()
-
-    mock_conn.cursor.return_value = mock_cur
-    mock_cur.rowcount = 1
+    mock_conn, mock_cur = mock_db
 
     with patch(
         "services.appointment_service.get_db_connection",
@@ -135,7 +190,7 @@ def test_completed_status_updates_client():
 
         mock_update_client.assert_called_once_with(3)
 
-def test_confirmed_status_sends_sms():
+def test_confirmed_status_sends_sms(mock_db):
     """
     Purpose:
         Verify that confirmed appointments
@@ -156,11 +211,7 @@ def test_confirmed_status_sends_sms():
         Business Rule Test
     """
 
-    mock_conn = MagicMock()
-    mock_cur = MagicMock()
-
-    mock_conn.cursor.return_value = mock_cur
-    mock_cur.rowcount = 1
+    mock_conn, mock_cur = mock_db
 
     mock_cur.fetchone.return_value = (
         "Tony",
