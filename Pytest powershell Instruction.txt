@@ -1,0 +1,4 @@
+Pytest powershell Instruction
+pytest --cov=. --cov-report=term-missing
+
+pytest tests/test_lead_integration.py -v
