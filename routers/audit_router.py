@@ -78,14 +78,26 @@ def admin_audit_log_page(request: Request):
     </head>
 
     <body>
+       <h1> AI Receptionist CRM</h1>
+        <!-- Navigation Bar -->
+        <div class="navbar">
+            <a href="/admin">🏠 Dashboard</a>
+            <a href="/admin/leads">📋 Leads</a>
+            <a href="/admin/appointments">📅 Appointments</a>
+            <a href="/admin/clients">👥 Clients</a>
+            <a href="/admin/sms">💬 Messages</a>
+            <a href="/admin/users">🔐 Users</a>
+            <a href="/admin/audit-log">📜 Audit Log</a>
 
-        <div style="margin-bottom:20px;">
-            <a href="/admin">🏠 Admin Home</a>
-            &nbsp;&nbsp;&nbsp;
-            <a href="/admin/logout">Logout</a>
+            <span style="float:right">
+                <a href="/admin/logout">Logout</a>
+            </span>
         </div>
 
+            <!-- Page Content -->
+
         <h2>Audit Log</h2>
+            <p>Security and activity monitoring</p>
 
         <table>
             <thead>

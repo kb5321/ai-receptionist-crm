@@ -171,7 +171,7 @@ def leads_admin_page(request: Request):
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Terra Spa Clients</title>
+        <title>AI Receptionist CRM</title>
 
         <style>
             body {
@@ -201,12 +201,27 @@ def leads_admin_page(request: Request):
     </head>
 
     <body>
-        <div style="margin-bottom:20px;">
-            <a href="/admin">🏠 Admin Home</a>
-            &nbsp;&nbsp;&nbsp;
+    <h1> AI Receptionist CRM</h1>
+        <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="/admin">🏠 Dashboard</a>
+        <a href="/admin/leads">📋 Leads</a>
+        <a href="/admin/appointments">📅 Appointments</a>
+        <a href="/admin/clients">👥 Clients</a>
+        <a href="/admin/sms">💬 Messages</a>
+        <a href="/admin/users">🔐 Users</a>
+        <a href="/admin/audit-log">📜 Audit Log</a>
+
+        <span style="float:right">
             <a href="/admin/logout">Logout</a>
-        </div>
-        <h2>Terra Spa Client Dashboard</h2>
+        </span>
+    </div>
+
+    <!-- Page Content -->
+    <h2>Client Management</h2>
+    <p>View client profiles, history, notes, and communications</p>
+
+        <!-- Client Table -->
 
         <div
             id="clientStats"

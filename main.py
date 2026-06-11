@@ -179,7 +179,7 @@ def health():
 @app.get("/version")
 def version():
     return {
-        "app": "Terra Spa CRM",
+        "app": "AI Receptionist CRM",
         "version": APP_VERSION,
         "environment": "production"
     }
@@ -363,7 +363,7 @@ def chat_page():
 
     <body>
 
-        <h2>Terra Spa AI Chat</h2>
+        <h2>AI Receptionist CRM - Chat</h2> 
 
         <label>Session ID:</label>
         <input id="sessionId" value="test-001" />
@@ -472,7 +472,8 @@ def admin_home(request: Request):
 
 <html>
 <head>
-    <title>Terra Spa Admin</title>
+    
+    <title>AI Receptionist CRM Dashboard</title>
 
 
 <style>
@@ -519,21 +520,20 @@ def admin_home(request: Request):
 
 
 <div class="top-nav">
-    <a href="/admin">🏠 Admin Home</a>
+    <a href="/admin">🏠 Dashboard</a>
     <a href="/admin/logout">🚪 Logout</a>
 </div>
 
-<h2>Terra Spa Admin Dashboard</h2>
+<h2>AI Receptionist CRM Dashboard</h2>
 
 <div class="menu">
-    <a href="/admin/leads">📋 Lead Dashboard</a>
-    <a href="/admin/appointments">📅 Appointment Dashboard</a>
-    <a href="/admin/clients">👤 Client Dashboard</a>
-    <a href="/admin/sms">📱 SMS Dashboard</a>
-    <a href="/admin/users">🔐 User Management</a>
-    <a href="/admin/audit-log">🧾 Audit Log</a>
+    <a href="/admin/leads">📋 Leads</a>
+    <a href="/admin/appointments">📅 Appointments</a>
+    <a href="/admin/clients">👥 Clients</a>
+    <a href="/admin/sms">💬 Messages</a>
+    <a href="/admin/users">🔐 Users</a>
+    <a href="/admin/audit-log">📜 Audit Log</a>
 </div>
-
 
 </body>
 </html>
@@ -547,7 +547,7 @@ def admin_login_page():
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Terra Spa Admin Login</title>
+        <title>AI Receptionist CRM - Admin Login</title>
 
         <style>
             body {
@@ -574,7 +574,7 @@ def admin_login_page():
 
     <body>
 
-        <h2>Terra Spa Admin Login</h2>
+        <h2>AI Receptionist CRM - Admin Login</h2>
 
         <form method="post" action="/admin/login">
 
