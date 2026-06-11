@@ -36,16 +36,24 @@ def send_sms(to_number: str, message: str):
 
     return response.json_dict()
 
-
+    
 
     if __name__ == "__main__":
         from services.sms_service import save_sms_message
 
-        test_to_number = "+12102940217"
-        test_message = "Dev test after moving save_sms_message to sms_service."
+        test_to_number = os.getenv("TEST_SMS_TO_NUMBER")
+        test_message = "Dev test message."
 
-        result = send_sms(test_to_number, test_message)
+        if not test_to_number:
+            raise ValueError("TEST_SMS_TO_NUMBER is not configured")
+        
+        
 
+        result =send_sms(test_to_number, test_message)
+
+        if not result:
+            raise RuntimeError("SMS send failed")
+     
         save_sms_message(
             client_id=None,
             phone=test_to_number,
