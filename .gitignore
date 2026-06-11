@@ -19,3 +19,7 @@ Thumbs.db
 
 # Database exports
 hello_ai.sql
+
+# coverage
+.coverage
+htmlcov/
