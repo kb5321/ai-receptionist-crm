@@ -1,6 +1,6 @@
 # AI Receptionist CRM Platform
 
-A cloud-hosted customer engagement and workflow automation platform built with **FastAPI**, **PostgreSQL**, **OpenAI**, **RingCentral**, **Docker**, and **GitHub Actions**.
+A cloud-hosted customer engagement and workflow automation platform built with **FastAPI**, **PostgreSQL**, **OpenAI**, **RingCentral**, **Docker**, **GitHub Actions**, and **Microsoft Azure**.
 
 The platform combines conversational AI, customer relationship management (CRM), appointment tracking, SMS communication, and workflow automation into a unified business application.
 
@@ -16,12 +16,90 @@ This project serves both as a production-oriented business platform and a softwa
 
 ---
 
+# Live Demo
+
+Azure App Service Deployment:
+
+```text
+https://terra-spa-crm-app.azurewebsites.net/admin/login
+```
+
+Demo credentials available upon request.
+
+---
+
+# Screenshots
+
+## Login Page
+
+Administrator login for AI Receptionist CRM.
+
+![Login Page](screenshots/01-login-page.png)
+
+---
+
+## Dashboard
+
+System overview and administrative dashboard.
+
+![Dashboard](screenshots/02-dashboard.png)
+
+---
+
+## Lead Management
+
+Track and manage customer leads generated through AI conversations and business workflows.
+
+![Lead Management](screenshots/03-leads.png)
+
+---
+
+## Appointment Management
+
+Manage appointments, scheduling status, and customer bookings.
+
+![Appointment Management](screenshots/04-appointments.png)
+
+---
+
+## Client Management
+
+Maintain customer records, service history, and communication details.
+
+![Client Management](screenshots/05-clients.png)
+
+---
+
+## Client Profile
+
+Customer profile including contact information, appointments, notes, and communication history.
+
+![Client Profile](screenshots/06-client-profile-overview.png)
+
+---
+
+## Conversation History
+
+Persistent conversation history supporting AI-assisted customer engagement and lead qualification workflows.
+
+![Conversation History](screenshots/07-conversation-history.png)
+
+---
+
+## SMS Message Center
+
+View and manage customer communications through RingCentral SMS integration.
+
+![SMS Messages](screenshots/08-sms-messages.png)
+
+---
+
 # Features
 
 ## CRM
 
 * Lead Management
-* Client Managements
+* Client Management
 * Appointment Tracking
 * Client Notes
 * SMS History
@@ -54,6 +132,7 @@ This project serves both as a production-oriented business platform and a softwa
 * Docker Compose Support
 * PostgreSQL Database
 * GitHub Actions CI/CD
+* Microsoft Azure Deployment
 
 ---
 
@@ -82,12 +161,25 @@ This project serves both as a production-oriented business platform and a softwa
 * GitHub Actions
 * Git
 * Ubuntu (WSL2)
+* Microsoft Azure
 
 ## Testing
 
 * Pytest
 * Unit Testing
 * Integration Testing
+
+Run tests:
+
+```bash
+pytest
+```
+
+Generate coverage report:
+
+```bash
+pytest --cov=. --cov-report=term-missing
+```
 
 ---
 
@@ -111,7 +203,13 @@ External Services:
 Deployment:
     • Docker
     • Docker Compose
-    • Azure (planned)
+    • Microsoft Azure App Service
+```
+
+Detailed architecture documentation:
+
+```text
+docs/architecture.md
 ```
 
 ---
@@ -146,15 +244,17 @@ Active development.
 * Audit Logging
 * SMS Integration
 * Docker Deployment
+* Azure Deployment
 * GitHub Repository
 * Automated Testing
+* Architecture Documentation
 
 ## Current Focus
 
-* Documentation
-* Architecture Improvements
 * Front-End Modernization
-* Cloud Deployment
+* React User Interface
+* Reporting & Analytics
+* Voice AI Integration
 
 ---
 
@@ -180,6 +280,7 @@ http://127.0.0.1:8000
 /admin/clients
 /admin/leads
 /admin/appointments
+/admin/sms
 ```
 
 ---
@@ -195,6 +296,23 @@ TEST_SMS_TO_NUMBER=your_test_phone_number
 ```
 
 Additional RingCentral credentials may also be required.
+
+---
+
+# Key Engineering Concepts
+
+This project demonstrates:
+
+* REST API Design
+* Layered Application Architecture
+* Service-Oriented Design
+* Authentication & Authorization
+* Conversational AI Integration
+* Semantic Information Extraction
+* Workflow Automation
+* Containerization with Docker
+* Automated Testing
+* Cloud Deployment on Microsoft Azure
 
 ---
 
