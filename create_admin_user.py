@@ -7,9 +7,16 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-username = "admin"
-plain_password = "ChangeMe123!"
-role = "admin"
+
+username = os.getenv("ADMIN_USERNAME")
+plain_password = os.getenv("ADMIN_PASSWORD")
+role = os.getenv("ADMIN_ROLE", "admin")
+
+if not username:
+    raise ValueError("ADMIN_USERNAME is not configured")
+
+if not plain_password:
+    raise ValueError("ADMIN_PASSWORD is not configured")
 
 password_hash = pbkdf2_sha256.hash(plain_password)
 
