@@ -32,7 +32,7 @@ from services.lead_service import save_lead
 # Application Version
 # =====================================
 
-APP_VERSION = "2026.06.07.01"
+APP_VERSION = "1.0.0"
 
 
 
