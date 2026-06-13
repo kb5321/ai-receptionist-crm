@@ -15,6 +15,8 @@ from openai import OpenAI
 from passlib.hash import pbkdf2_sha256
 import re
 import os
+import traceback
+
 
 from database import get_db_connection
 from routers import users
@@ -135,7 +137,17 @@ def load_recent_messages(session_id, limit=10):
 def extract_lead_info(question):
     text = question.lower()
 
-    services = ["massage", "facial", "waxing", "nails"]
+    
+    services = [
+        "massage",
+        "facial",
+        "waxing",
+        "nails",
+        "bodywrap",
+        "body wrap",
+        "pedicure",
+        "manicure"
+    ]
     service = "Unknown"
 
     for s in services:
@@ -143,16 +155,54 @@ def extract_lead_info(question):
             service = s
             break
 
-    phone_match = re.search(r"\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b", question)
-    phone = phone_match.group(0) if phone_match else "Unknown"
+    
+    phone_match = re.search(r"\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}", question )
+
+    if phone_match:
+        raw_phone = phone_match.group(0)
+        digits = re.sub(r"\D", "", raw_phone)
+
+        if len(digits) == 10:
+            phone = f"{digits[:3]}-{digits[3:6]}-{digits[6:]}"
+        else:
+            phone = "Unknown"
+    else:
+        phone = "Unknown"
 
     preferred_time = "Unknown"
-    time_keywords = ["today", "tomorrow", "morning", "afternoon", "evening", "friday", "saturday", "sunday", "monday", "tuesday", "wednesday", "thursday"]
 
-    for word in time_keywords:
-        if word in text:
-            preferred_time = word
-            break
+    date_time_match = re.search(
+        r"\b("
+        r"january|february|march|april|may|june|july|august|"
+        r"september|october|november|december"
+        r")\s+\d{1,2}"
+        r"(\s+(morning|afternoon|evening|at\s+\d{1,2}(:\d{2})?\s*(am|pm)?))?",
+        text,
+        re.IGNORECASE
+    )
+
+    if date_time_match:
+        preferred_time = date_time_match.group(0).strip()
+    else:
+        time_keywords = [
+            "today",
+            "tomorrow",
+            "morning",
+            "afternoon",
+            "evening",
+            "friday",
+            "saturday",
+            "sunday",
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday"
+        ]
+
+        for word in time_keywords:
+            if word in text:
+                preferred_time = word
+                break    
 
     client_name = "Unknown"
 
@@ -707,6 +757,7 @@ def admin_login(
     return response
 
 
+
 @app.post("/ask")
 def ask_ai(request: AskRequest):
     try:
@@ -716,7 +767,7 @@ def ask_ai(request: AskRequest):
             {
                 "role": "system",
                 "content": f"""
-                You are a professional AI receptionist for Terra Spa.
+                You are a professional AI receptionist.
 
                 Use the following business knowledge when answering clients:
 
@@ -756,24 +807,94 @@ def ask_ai(request: AskRequest):
             "facial",
             "massage",
             "waxing",
-            "nails"
+            "nails",
+            "bodywrap",
+            "body wrap"
         ]
 
         lead_saved = False
 
-        if any(word in request.question.lower() for word in booking_keywords):
-            client_name, phone, service, preferred_time = extract_lead_info(request.question)
+        conversation_text = " ".join(
+            msg["content"] for msg in previous_messages
+        ) + " " + request.question
 
-            save_lead(
-                request.session_id,
-                client_name,
-                phone,
-                service,
-                preferred_time
+        if any(word in conversation_text.lower() for word in booking_keywords):
+            client_name, phone, service, preferred_time = extract_lead_info(
+                conversation_text
             )
 
+            last_assistant_message = ""
 
-            lead_saved = True
+            for msg in reversed(previous_messages):
+                if msg["role"] == "assistant":
+                    last_assistant_message = msg["content"].lower()
+                    break
+
+            current_answer = request.question.strip()
+
+            awaiting_name = (
+                "provide your name" in last_assistant_message
+            )
+
+            awaiting_service = (
+                "what service" in last_assistant_message
+                or "service would you like" in last_assistant_message
+            )
+
+            if awaiting_name:
+                client_name = current_answer.title()
+
+            if awaiting_service:
+                service = current_answer.lower()
+
+            if service == "body wrap":
+                service = "bodywrap"
+
+            if phone == "Unknown":
+                ai_answer = (
+                    "I wasn't able to identify a valid phone number. "
+                    "Could you please provide a 10-digit phone number "
+                    "so I can save your appointment request?"
+                )
+
+                lead_saved = False
+
+            elif client_name == "Unknown":
+                ai_answer = (
+                    "I have your service request and phone number. "
+                    "Could you please provide your name so I can save your appointment request?"
+                )
+
+                lead_saved = False
+
+            elif service == "Unknown":
+                ai_answer = (
+                    "I have your name, phone number, and preferred appointment time. "
+                    "What service would you like to book?"
+                )
+
+                lead_saved = False
+
+            else:
+                if preferred_time != "Unknown":
+                    #capitalize
+                    preferred_time = preferred_time.title
+
+                save_lead(
+                    request.session_id,
+                    client_name,
+                    phone,
+                    service,
+                    preferred_time
+                )
+
+                ai_answer = (
+                    f"Thank you, {client_name}. I have saved your appointment request "
+                    f"for {service} on {preferred_time}. Your request will be reviewed, "
+                    "and you will be contacted with availability and confirmation details soon."
+                )
+
+                lead_saved = True
 
         save_message(
             "assistant",
@@ -790,9 +911,181 @@ def ask_ai(request: AskRequest):
         }
 
     except Exception as e:
+        traceback.print_exc()
+
         raise HTTPException(
             status_code=500,
             detail=str(e)
         )
+    
+
+# @app.post("/ask")
+# def ask_ai(request: AskRequest):
+#     try:
+#         previous_messages = load_recent_messages(request.session_id)
+
+#         messages = [
+#             {
+#                 "role": "system",
+#                 "content": f"""
+#                 You are a professional AI receptionist for Terra Spa.
+
+#                 Use the following business knowledge when answering clients:
+
+#                 {BUSINESS_KNOWLEDGE}
+#                 """
+#             }
+#         ]
+
+#         messages.extend(previous_messages)
+
+#         messages.append(
+#             {
+#                 "role": "user",
+#                 "content": request.question
+#             }
+#         )
+
+#         save_message(
+#             "user",
+#             request.question,
+#             request.session_id
+#         )
+
+#         response = client.chat.completions.create(
+#             model="gpt-4o-mini",
+#             messages=messages,
+#             temperature=0.4
+#         )
+
+#         ai_answer = response.choices[0].message.content
+
+#         booking_keywords = [
+#             "book",
+#             "appointment",
+#             "schedule",
+#             "waitlist",
+#             "facial",
+#             "massage",
+#             "waxing",
+#             "nails"
+#         ]
+
+#         lead_saved = False
+
+#         conversation_text = " ".join(
+#             msg["content"] for msg in previous_messages
+#         ) + " " + request.question
+
+#         print("\nCONVERSATION TEXT:")
+#         print(conversation_text)
+#         print()
+ 
+#         if any(word in conversation_text.lower() for word in booking_keywords):
+#             client_name, phone, service, preferred_time = extract_lead_info(
+#                 conversation_text
+#             )
+
+#             if service == "body wrap":
+#                 service = "bodywrap"
+
+
+#             last_assistant_message = ""
+
+#             for msg in reversed(previous_messages):
+#                 if msg["role"] == "assistant":
+#                     last_assistant_message = msg["content"].lower()
+#                     break
+
+#             current_answer = request.question.strip()
+
+#             if (
+#                 client_name == "Unknown"
+#                 and "name" in last_assistant_message
+#                 and "provide" in last_assistant_message
+#             ):
+#                 client_name = current_answer.title()
+
+#             if (
+#                 service == "Unknown"
+#                 and "service" in last_assistant_message
+#                 and "book" in last_assistant_message
+#             ):
+#                 service = current_answer.title()
+
+#             print("PHONE:", phone)
+#             print("NAME:", client_name)
+#             print("SERVICE:", service)
+#             print("TIME:", preferred_time)
+
+#             if phone == "Unknown":
+#                 ai_answer = (
+#                     "I wasn't able to identify a valid phone number. "
+#                     "Could you please provide a 10-digit phone number "
+#                     "so I can save your appointment request?"
+#                 )
+            
+#                 lead_saved = False
+
+#             elif client_name == "Unknown":
+#                 ai_answer = (
+#                     "I have your service request and phone number. "
+#                     "Could you please provide your name so I can save your appointment request?"
+#                 )
+            
+#                 lead_saved = False
+
+#             elif service == "Unknown":
+#                 ai_answer = (
+#                     "I have your name, phone number, and preferred appointment time. "
+#                     "What service would you like to book?"
+#                 )
+
+#                 lead_saved = False
+
+
+#             else:
+#                 save_lead(
+#                     request.session_id,
+#                     client_name,
+#                     phone,
+#                     service,
+#                     preferred_time
+#                 )
+
+#                 ai_answer = (
+#                     f"Thank you, {client_name}. I have saved your appointment request "
+#                     f"for {service} on {preferred_time}. Your request will be reviewed, "
+#                     "and you will be contacted with availability and confirmation details soon."
+#                 )
+
+#                 lead_saved = True
+
+#         save_message(
+#             "assistant",
+#             ai_answer,
+#             request.session_id
+#         )
+
+#         return {
+#             "session_id": request.session_id,
+#             "question": request.question,
+#             "answer": ai_answer,
+#             "messages_used_from_database": len(previous_messages),
+#             "lead_saved": lead_saved
+#         }
+
+#     # except Exception as e:
+#     #     raise HTTPException(
+#     #         status_code=500,
+#     #         detail=str(e)
+#     #     )
+#     except Exception as e:
+#         traceback.print_exc()
+
+#         raise HTTPException(
+#             status_code=500,
+#             detail=str(e)
+#     )
     
     
