@@ -49,36 +49,36 @@ app.include_router(appointments.router)
 app.include_router(sms.router)
 app.include_router(audit_router.router)
 
-
+# Demo business knowledge used for AI receptionist behavior.
+# Production deployments should load business-specific data from a database or configuration.
 
 BUSINESS_KNOWLEDGE = """
-Business Name: Terra Spa
+Business Name: Demo Wellness Center
 
 Business Type:
-Terra Spa is a spa business offering massage, facials, nails, and waxing services.
-
-Website:
-www.TerraSpaSa.com
+A wellness and personal care business offering appointment-based services.
 
 Current Status:
-Terra Spa is currently relocating and is not open for appointments at this time.
+Accepting inquiries and appointment requests.
 
 Booking Policy:
-Clients can join the waitlist and Terra Spa will contact them when appointments become available again.
+Clients may submit appointment requests and will be contacted for confirmation.
 
 Gift Certificates:
-Gift certificates will be honored after reopening. Clients should provide their name, phone number, and gift certificate details.
+Clients should provide their name, phone number, and gift certificate details.
 
 Client Communication Style:
 Be polite, calm, professional, and helpful. Keep answers short and clear.
 
 Important Rules:
-- Do not invent prices.
-- Do not invent appointment availability.
-- Do not provide medical advice.
-- If important booking information is missing, ask for the client's name, phone number, preferred service, and preferred time.
-- If the client already provided booking details, confirm the request was added to the waitlist.
-- If the client wants to book, explain that Terra Spa is relocating and can add them to the waitlist.
+
+* Do not invent prices.
+* Do not invent appointment availability.
+* Do not provide medical advice.
+* If important booking information is missing, ask for the client's name, phone number, preferred service, and preferred time.
+* If the client already provided booking details, confirm the request was received and saved.
+* If the client wants to book, explain that appointment requests are reviewed and clients will be contacted with availability and confirmation details.
+
 """
 
 
