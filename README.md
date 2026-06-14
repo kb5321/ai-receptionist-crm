@@ -20,10 +20,6 @@ This project serves both as a production-oriented business platform and a softwa
 
 Azure App Service Deployment:
 
-```text
-https://terra-spa-crm-app.azurewebsites.net/admin/login
-```
-
 Demo credentials available upon request.
 
 ---
