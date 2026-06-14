@@ -143,7 +143,13 @@ Security features include:
 
 ## 6. AI Receptionist Flow
 
+The AI Receptionist supports multi-turn customer conversations and converts natural language requests into structured CRM records.
+
+Workflow:
+
 Customer Message
+↓
+Conversation History Retrieval
 ↓
 OpenAI Processing
 ↓
@@ -151,22 +157,61 @@ Intent Detection
 ↓
 Information Extraction
 ↓
+Data Validation
+↓
+Missing Information Collection
+↓
 Lead Creation
 ↓
 CRM Workflow
 
-Extracted information may include:
+The system extracts and validates:
 
 * Client Name
 * Phone Number
 * Service Requested
 * Preferred Appointment Time
 
-The resulting data is stored in spa_leads and can be converted into appointments and client records.
+If required information is missing, the AI Receptionist automatically requests the missing details and continues the conversation until sufficient information is collected.
+
+Conversation history is stored in the `chat_messages` table and is used to maintain context across multiple interactions.
+
+Validated leads are stored in `spa_leads` and can later be converted into appointments and client records.
+
 
 ---
 
-## 7. SMS Flow
+## 7. Conversational Lead Capture Workflow
+
+The platform supports conversation-driven lead capture.
+
+Example workflow:
+
+Customer:
+"I need a massage appointment for July 31 afternoon."
+
+AI Receptionist:
+Requests missing phone number.
+
+Customer:
+Provides phone number.
+
+AI Receptionist:
+Requests customer name.
+
+Customer:
+Provides name.
+
+AI Receptionist:
+Validates collected information and automatically creates a CRM lead record.
+
+This workflow enables the platform to collect business data incrementally while maintaining a natural conversational experience.
+
+
+
+---
+
+## 8. SMS Flow
 
 Administrator
 ↓
@@ -187,33 +232,132 @@ Each message is stored in sms_messages with:
 
 ---
 
-## 8. Deployment Architecture
+## 9. Deployment Architecture
+
+## High-Level System Diagram
+
+Customer
+↓
+Web Chat Interface
+↓
+FastAPI Application
+↓
+OpenAI API
+↓
+Information Extraction & Validation
+↓
+PostgreSQL Database
+
+Administrative Users
+↓
+CRM Dashboard
+↓
+Clients / Leads / Appointments
+↓
+RingCentral SMS API
+↓
+Customer Communications
+
+### Explanation
+
+The customer interacts with the AI Receptionist through the web chat interface. Customer messages are processed by the FastAPI application and analyzed using OpenAI. Extracted and validated information is stored in PostgreSQL and becomes available within the CRM dashboard. Administrators can manage customer records and communicate with customers through RingCentral SMS integration.
+
+---
+
+## Development Environment
+
+The AI Receptionist CRM was developed using Docker, FastAPI, and PostgreSQL.
 
 Developer Workstation
 ↓
 Docker Compose
 ↓
-FastAPI Container
+Starts Application Containers
 ↓
-PostgreSQL Container
+FastAPI Container + PostgreSQL Container
 
-CI/CD Pipeline
+### Components
 
-GitHub
+**Developer Workstation**
+
+The developer's computer where the source code is written, tested, and maintained.
+
+**Docker Compose**
+
+Docker Compose is used to start and manage the containers required by the application.
+
+**FastAPI Container**
+
+The FastAPI container hosts the CRM application, API endpoints, authentication system, AI receptionist, and administrative dashboards.
+
+**PostgreSQL Container**
+
+The PostgreSQL container stores application data including clients, leads, appointments, SMS history, notes, audit logs, and conversation history.
+
+### Startup Process
+
+1. The developer opens the project on the workstation.
+2. Docker Compose reads the `docker-compose.yml` configuration file.
+3. Docker Compose starts the FastAPI container.
+4. Docker Compose starts the PostgreSQL container.
+5. FastAPI establishes a connection to PostgreSQL.
+6. The CRM application becomes available through a web browser.
+
+### Development Environment Diagram
+
+Developer Workstation
+↓
+Docker Compose
+↓
+Starts FastAPI Container
+↓
+Starts PostgreSQL Container
+↓
+FastAPI Connects to PostgreSQL
+↓
+CRM Application Available
+
+### Container Relationship
+
+Docker Compose
+├── FastAPI Container
+└── PostgreSQL Container
+
+The FastAPI and PostgreSQL containers run independently and communicate through a Docker network. This architecture simplifies local development and mirrors cloud deployment environments.
+
+
+----
+## CI/CD Pipeline
+
+GitHub Repository
 ↓
 GitHub Actions
 ↓
 Automated Testing
 ↓
+Build Validation
+↓
 Deployment Workflow
-
-Future deployment target:
-
-* Microsoft Azure
 
 ---
 
-## 9. Future Roadmap
+## Cloud Deployment
+
+Current deployment environment:
+
+* Microsoft Azure App Service
+* Azure PostgreSQL Database
+
+The platform is containerized using Docker and supports automated deployment workflows through GitHub Actions.
+
+The architecture is designed to support future expansion into multi-location deployments, SaaS hosting models, and additional AI-powered services.
+
+---
+
+
+---
+
+## 10. Future Roadmap
 
 ### Phase 1
 
