@@ -878,7 +878,11 @@ def ask_ai(request: AskRequest):
             else:
                 if preferred_time != "Unknown":
                     #capitalize
-                    preferred_time = preferred_time.title
+                    preferred_time = preferred_time.title()
+
+                if service  != "Unknown":
+                    service = service.title()
+                   
 
                 save_lead(
                     request.session_id,
