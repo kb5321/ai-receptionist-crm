@@ -44,13 +44,18 @@ System overview and administrative dashboard.
 
 ![Dashboard](screenshots/02-dashboard.png)
 
+## AI Receptionist Chat
+
+The AI Receptionist supports multi-turn conversations, validates customer information, extracts structured business data, and automatically creates CRM records for follow-up and workflow automation.
+
+![Chat](screenshots/03-ai-receptionist-chat.png)
 ---
 
 ## Lead Management
 
 Track and manage customer leads generated through AI conversations and business workflows.
 
-![Lead Management](screenshots/03-leads.png)
+![Lead Management](screenshots/04-leads.png)
 
 ---
 
@@ -58,7 +63,7 @@ Track and manage customer leads generated through AI conversations and business 
 
 Manage appointments, scheduling status, and customer bookings.
 
-![Appointment Management](screenshots/04-appointments.png)
+![Appointment Management](screenshots/05-appointments.png)
 
 ---
 
@@ -66,7 +71,7 @@ Manage appointments, scheduling status, and customer bookings.
 
 Maintain customer records, service history, and communication details.
 
-![Client Management](screenshots/05-clients.png)
+![Client Management](screenshots/06-clients.png)
 
 ---
 
@@ -74,7 +79,7 @@ Maintain customer records, service history, and communication details.
 
 Customer profile including contact information, appointments, notes, and communication history.
 
-![Client Profile](screenshots/06-client-profile-overview.png)
+![Client Profile](screenshots/07-client-profile-overview.png)
 
 ---
 
@@ -82,7 +87,7 @@ Customer profile including contact information, appointments, notes, and communi
 
 Persistent conversation history supporting AI-assisted customer engagement and lead qualification workflows.
 
-![Conversation History](screenshots/07-conversation-history.png)
+![Conversation History](screenshots/08-conversation-history.png)
 
 ---
 
@@ -90,7 +95,7 @@ Persistent conversation history supporting AI-assisted customer engagement and l
 
 View and manage customer communications through RingCentral SMS integration.
 
-![SMS Messages](screenshots/08-sms-messages.png)
+![SMS Messages](screenshots/09-sms-messages.png)
 
 ---
 
