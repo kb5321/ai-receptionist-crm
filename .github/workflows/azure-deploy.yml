@@ -1,4 +1,4 @@
-name: Deploy Terra Spa CRM to Azure
+name: Deploy AI Receptionist CRM to Azure
 
 on:
   push:

@@ -137,7 +137,7 @@ def test_admin_login_page_loads():
     response = client.get("/admin/login")
 
     assert response.status_code == 200
-    assert "Terra Spa Admin Login" in response.text
+    assert "Demo Wellness Center Admin Login" in response.text
     assert '<form method="post" action="/admin/login">' in response.text
 
 
@@ -173,7 +173,7 @@ def test_admin_clients_redirects_to_login_page():
 
     assert response.status_code == 200
 
-    assert "Terra Spa Admin Login" in response.text
+    assert "Demo Wellness Center Admin Login" in response.text
 
 
 

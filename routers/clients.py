@@ -818,28 +818,28 @@ def client_profile_page(client_id: int, request: Request):
                 if (template === "birthday") {{
 
                     textarea.value =
-                        "Happy Birthday! 🎉 Terra Spa wishes you a wonderful day. We look forward to seeing you soon.";
+                        "Happy Birthday! 🎉 Demo Wellness Center wishes you a wonderful day. We look forward to seeing you soon.";
 
                 }}
 
                 else if (template === "reminder") {{
 
                     textarea.value =
-                        "This is a friendly reminder from Terra Spa about your upcoming appointment. Please reply YES to confirm.";
+                        "This is a friendly reminder from Demo Wellness Center about your upcoming appointment. Please reply YES to confirm."
 
                 }}
 
                 else if (template === "followup") {{
 
                     textarea.value =
-                        "Thank you for visiting Terra Spa. We hope you enjoyed your service. We would love to see you again soon.";
+                        "Thank you for visiting Demo Wellness Center. We hope you enjoyed your service. We would love to see you again soon.";
 
                 }}
 
                 else if (template === "thankyou") {{
 
                     textarea.value =
-                        "Thank you for choosing Terra Spa. We truly appreciate your business and look forward to serving you again.";
+                        "Thank you for choosing Demo Wellness Center. We truly appreciate your business and look forward to serving you again.";
 
                 }}
 

@@ -164,42 +164,6 @@ def get_admin_appointments_page(request):
     """
 
 
-# def update_appointment_status_service(appointment_id: int, status: str):
-#     conn = get_db_connection()
-#     cur = conn.cursor()
-
-#     cur.execute(
-#         """
-#         UPDATE appointments
-#         SET status = %s
-#         WHERE id = %s
-#         """,
-#         (status, appointment_id)
-#     )
-
-#     updated_count = cur.rowcount
-#     conn.commit()
-
-#     cur.close()
-#     conn.close()
-
-#     client_updated = False
-#     sms_sent = False
-
-#     if status == "completed":
-#         client_updated = update_client_from_appointment(appointment_id)
-
-#     if status == "confirmed":
-#         sms_sent = send_appointment_confirmation_sms(appointment_id)
-
-#     return {
-#         "appointment_id": appointment_id,
-#         "new_status": status,
-#         "updated_count": updated_count,
-#         "client_updated": client_updated,
-#         "sms_sent": sms_sent
-#     }
-
 def update_appointment_status_service(appointment_id: int, status: str):
 
     
@@ -257,7 +221,7 @@ def update_appointment_status_service(appointment_id: int, status: str):
             appointment_time = appointment[3]
 
             message = (
-                f"Hi {client_name}, your Terra Spa {service} appointment "
+                f"Hi {client_name}, your Demo Wellness Center {service} appointment "
                 f"request for {appointment_time} has been confirmed."
             )
 
@@ -326,7 +290,7 @@ def send_appointment_confirmation_sms(appointment_id: int):
     appointment_time = appointment[4]
 
     message = (
-        f"Hi {client_name}, your Terra Spa {service} appointment "
+        f"Hi {client_name}, your Demo Wellness Center {service} appointment "
         f"for {appointment_time} has been confirmed."
     )
 
