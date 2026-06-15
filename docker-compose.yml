@@ -1,7 +1,7 @@
 services:
   crm:
     build: .
-    container_name: terra-spa-crm
+    container_name: ai-receptionist-crm
     env_file:
       - .env.docker
     ports:
