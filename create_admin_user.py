@@ -35,6 +35,4 @@ conn.commit()
 cur.close()
 conn.close()
 
-print("Admin user created")
-print("Username:", username)
-print("Temporary password:", plain_password)
+print("Admin user created successfully.")
