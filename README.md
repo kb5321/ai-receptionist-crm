@@ -1,26 +1,61 @@
-# AI Receptionist CRM Platform
+# AI Business Assistant Platform
 
-A cloud-hosted customer engagement and workflow automation platform built with **FastAPI**, **PostgreSQL**, **OpenAI**, **RingCentral**, **Docker**, **GitHub Actions**, and **Microsoft Azure**.
+> Enterprise AI platform for customer engagement, CRM, workflow automation, and intelligent communication.
 
-The platform combines conversational AI, customer relationship management (CRM), appointment tracking, SMS communication, and workflow automation into a unified business application.
+---
+
+## Version
+
+**2.0.0**
+
+
+---
+
+## Mission
+
+Build an AI-powered business platform that helps service-based organizations automate customer engagement, customer relationship management, communications, scheduling, and business workflows through secure, scalable, and intelligent software.
+
+---
+
+## Vision
+
+The AI Business Assistant Platform is designed to evolve into a reusable business automation platform for service-based businesses.
+
+Rather than solving a single business problem, the platform provides a foundation that can support CRM, AI Receptionists, appointment scheduling, messaging, reporting, analytics, voice AI, and future SaaS capabilities.
+
+Every feature is engineered with long-term scalability, maintainability, and customer value in mind.
+
+---
+
+# Product Philosophy
+
+Every engineering decision is evaluated using two guiding principles:
+
+> **Is this good engineering?**
+
+> **Does this make the product more valuable?**
+
+These principles drive every architectural decision, code review, feature implementation, and product enhancement.
 
 ---
 
 # Overview
 
-AI Receptionist CRM transforms customer conversations into structured business workflows.
+The AI Business Assistant Platform transforms customer conversations into structured business workflows.
 
-The system captures leads, manages appointments, maintains client profiles, automates SMS communication, and supports AI-assisted customer engagement through OpenAI integration.
+Current capabilities include:
 
-This project serves both as a production-oriented business platform and a software engineering portfolio project focused on modern backend development, cloud deployment, testing, containerization, and AI integration.
+- AI Receptionist
+- Customer Relationship Management (CRM)
+- Appointment Tracking
+- Client Management
+- SMS Communication
+- Workflow Automation
+- AI-assisted Customer Engagement
 
----
+The platform combines conversational AI with enterprise backend architecture to automate customer interactions while maintaining structured business records and operational workflows.
 
-# Live Demo
-
-Azure App Service Deployment:
-
-Demo credentials available upon request.
+This repository serves both as a production-oriented business platform and as a software engineering portfolio demonstrating modern Python backend development, cloud deployment, testing, DevOps, and AI integration.
 
 ---
 
@@ -28,52 +63,66 @@ Demo credentials available upon request.
 
 ## Login Page
 
-Administrator login for AI Receptionist CRM.
+Administrator login.
 
-![Login Page](screenshots/01-login-page.png)
+![Login](screenshots/01-login-page.png)
 
 ---
 
 ## Dashboard
 
-System overview and administrative dashboard.
+Administrative overview of the platform.
 
 ![Dashboard](screenshots/02-dashboard.png)
 
-## AI Receptionist Chat
+---
 
-The AI Receptionist supports multi-turn conversations, validates customer information, extracts structured business data, and automatically creates CRM records for follow-up and workflow automation.
+## AI Receptionist
+
+Conversational AI capable of:
+
+- Multi-turn conversations
+- Customer engagement
+- Lead qualification
+- Structured data extraction
+- CRM automation
 
 ![Chat](screenshots/03-ai-receptionist-chat.png)
+
 ---
 
 ## Lead Management
 
-Track and manage customer leads generated through AI conversations and business workflows.
+Manage customer leads captured by AI conversations.
 
-![Lead Management](screenshots/04-leads.png)
+![Leads](screenshots/04-leads.png)
 
 ---
 
 ## Appointment Management
 
-Manage appointments, scheduling status, and customer bookings.
+Scheduling and appointment tracking.
 
-![Appointment Management](screenshots/05-appointments.png)
+![Appointments](screenshots/05-appointments.png)
 
 ---
 
 ## Client Management
 
-Maintain customer records, service history, and communication details.
+Centralized customer database.
 
-![Client Management](screenshots/06-clients.png)
+![Clients](screenshots/06-clients.png)
 
 ---
 
 ## Client Profile
 
-Customer profile including contact information, appointments, notes, and communication history.
+Customer profile including:
+
+- Contact Information
+- Appointments
+- SMS History
+- Internal Notes
 
 ![Client Profile](screenshots/07-client-profile-overview.png)
 
@@ -81,7 +130,7 @@ Customer profile including contact information, appointments, notes, and communi
 
 ## Conversation History
 
-Persistent conversation history supporting AI-assisted customer engagement and lead qualification workflows.
+Persistent AI conversation history.
 
 ![Conversation History](screenshots/08-conversation-history.png)
 
@@ -89,9 +138,9 @@ Persistent conversation history supporting AI-assisted customer engagement and l
 
 ## SMS Message Center
 
-View and manage customer communications through RingCentral SMS integration.
+RingCentral SMS integration.
 
-![SMS Messages](screenshots/09-sms-messages.png)
+![SMS](screenshots/09-sms-messages.png)
 
 ---
 
@@ -99,41 +148,49 @@ View and manage customer communications through RingCentral SMS integration.
 
 ## CRM
 
-* Lead Management
-* Client Management
-* Appointment Tracking
-* Client Notes
-* SMS History
+- Lead Management
+- Client Management
+- Appointment Tracking
+- Client Notes
+- SMS History
+
+---
 
 ## AI Receptionist
 
-* Conversational AI
-* Lead Qualification
-* Service Request Capture
-* Customer Engagement Workflows
-* Semantic Information Extraction
+- Conversational AI
+- Lead Qualification
+- Business Workflow Automation
+- Semantic Information Extraction
+- Customer Engagement
+
+---
 
 ## Communications
 
-* SMS Messaging via RingCentral
-* Appointment Reminders
-* Follow-Up Messaging
-* Message Status Tracking
+- RingCentral SMS
+- Appointment Reminders
+- Follow-up Messaging
+- Delivery Status Tracking
+
+---
 
 ## Security
 
-* User Authentication
-* Role-Based Access Control
-* Password Hashing
-* Audit Logging
+- User Authentication
+- Role-Based Access Control
+- Password Hashing
+- Audit Logging
+
+---
 
 ## Platform
 
-* Docker Container Support
-* Docker Compose Support
-* PostgreSQL Database
-* GitHub Actions CI/CD
-* Microsoft Azure Deployment
+- Docker
+- Docker Compose
+- PostgreSQL
+- GitHub Actions
+- Azure Deployment
 
 ---
 
@@ -141,42 +198,42 @@ View and manage customer communications through RingCentral SMS integration.
 
 ## Backend
 
-* Python
-* FastAPI
-* PostgreSQL
+- Python
+- FastAPI
+- PostgreSQL
 
-## AI
+## Artificial Intelligence
 
-* OpenAI API
-* Conversational AI
-* Semantic Information Extraction
+- OpenAI API
+- Conversational AI
+- Semantic Information Extraction
 
 ## Communications
 
-* RingCentral SMS API
+- RingCentral SMS API
 
 ## DevOps
 
-* Docker
-* Docker Compose
-* GitHub Actions
-* Git
-* Ubuntu (WSL2)
-* Microsoft Azure
+- Docker
+- Docker Compose
+- GitHub Actions
+- Git
+- Ubuntu (WSL2)
+- Microsoft Azure
 
 ## Testing
 
-* Pytest
-* Unit Testing
-* Integration Testing
+- Pytest
+- Unit Testing
+- Integration Testing
 
-Run tests:
+Run all tests:
 
 ```bash
 pytest
 ```
 
-Generate coverage report:
+Coverage report:
 
 ```bash
 pytest --cov=. --cov-report=term-missing
@@ -186,96 +243,84 @@ pytest --cov=. --cov-report=term-missing
 
 # Architecture
 
-```text
-Customer
-    ↓
-AI Receptionist
-    ↓
-FastAPI API Layer
-    ↓
-Service Layer
-    ↓
-PostgreSQL
-
-External Services:
-    • OpenAI API
-    • RingCentral SMS
-
-Deployment:
-    • Docker
-    • Docker Compose
-    • Microsoft Azure App Service
+```
+                     Web Interface
+                           │
+          ┌────────────────┴────────────────┐
+          │                                 │
+   AI Receptionist API              Admin Portal
+          │                                 │
+          └────────────────┬────────────────┘
+                           │
+                     FastAPI Backend
+                           │
+                     Service Layer
+          ┌──────────────┬──────────────┐
+          │              │              │
+      Repository     AI Service     SMS Service
+          │              │              │
+     PostgreSQL      OpenAI API   RingCentral
 ```
 
-Detailed architecture documentation:
+Detailed architecture:
 
-```text
-docs/architecture.md
+```
+docs/ARCHITECTURE.md
+```
+
+---
+
+# Project Structure
+
+```
+app/
+docs/
+tests/
+screenshots/
+
+Dockerfile
+docker-compose.yml
+README.md
+requirements.txt
 ```
 
 ---
 
 # Automated Testing
 
-Current status:
+Current Status
 
-* 51+ automated tests
-* 75% code coverage
+- 51+ Automated Tests
+- 75% Code Coverage
 
-Test categories:
+Test Categories
 
-* Unit Tests
-* Integration Tests
-* Authentication Tests
-* Authorization Tests
-* Service Layer Tests
-* API Route Tests
-
----
-
-# Project Status
-
-Active development.
-
-## Completed Modules
-
-* CRM Core
-* User Management
-* Security & Roles
-* Audit Logging
-* SMS Integration
-* Docker Deployment
-* Azure Deployment
-* GitHub Repository
-* Automated Testing
-* Architecture Documentation
-
-## Current Focus
-
-* Front-End Modernization
-* React User Interface
-* Reporting & Analytics
-* Voice AI Integration
+- Unit Tests
+- Integration Tests
+- Authentication Tests
+- Authorization Tests
+- Service Layer Tests
+- API Tests
 
 ---
 
 # Running Locally
 
-## Build and Start
+Start the application:
 
 ```bash
 docker compose up --build
 ```
 
-## Application URL
+Application URL
 
-```text
+```
 http://127.0.0.1:8000
 ```
 
-## Useful Endpoints
+Useful Endpoints
 
-```text
+```
 /health
 /admin/login
 /admin/clients
@@ -288,59 +333,67 @@ http://127.0.0.1:8000
 
 # Environment Variables
 
-Create a `.env` file containing:
+Create a `.env` file:
 
 ```env
-DATABASE_URL=your_database_url
-OPENAI_API_KEY=your_openai_api_key
-TEST_SMS_TO_NUMBER=your_test_phone_number
+DATABASE_URL=
+OPENAI_API_KEY=
+TEST_SMS_TO_NUMBER=
 ```
 
-Additional RingCentral credentials may also be required.
+Additional RingCentral credentials are also required.
 
 ---
 
-# Key Engineering Concepts
+# Engineering Principles
 
-This project demonstrates:
+This project follows professional software engineering practices including:
 
-* REST API Design
-* Layered Application Architecture
-* Service-Oriented Design
-* Authentication & Authorization
-* Conversational AI Integration
-* Semantic Information Extraction
-* Workflow Automation
-* Containerization with Docker
-* Automated Testing
-* Cloud Deployment on Microsoft Azure
+- Clean Architecture
+- Separation of Concerns
+- SOLID Principles
+- Secure-by-Design
+- Test-Driven Development (where practical)
+- Continuous Refactoring
+- Documentation-Driven Development
+- Cloud-Native Deployment
+- Continuous Improvement
+
+---
+
+# Engineering Documentation
+
+Additional documentation is available in the `docs` folder.
+
+- PRODUCT_VISION.md
+- ENGINEERING_CHARTER.md
+- ROADMAP.md
+- ARCHITECTURE.md
+- API_GUIDE.md
+- CODING_STANDARDS.md
+- RELEASE_NOTES.md
 
 ---
 
 # Roadmap
 
-## Phase 1
+## Version 2.x
 
-* CRM Core
-* AI Receptionist
-* SMS Integration
+- React Front-End
+- Enhanced Dashboard
+- Reporting & Analytics
+- Voice AI
+- AI Knowledge Base
 
-## Phase 2
+---
 
-* Modern React Front-End
-* Enhanced Reporting
-* Improved Dashboard UX
+## Version 3.x
 
-## Phase 3
-
-* Voice AI Receptionist
-* Call Transcription
-* Semantic Client Profiles
-
-## Phase 4
-
-* Multi-Location SaaS Platform
-* SpaRes AI
+- Multi-Tenant SaaS
+- Subscription Management
+- Organization Management
+- Customer Portal
+- White-Label Platform
 
 ---
 
@@ -348,10 +401,26 @@ This project demonstrates:
 
 **Kouider Bakhti**
 
-Senior Software Engineer | Cloud, Distributed Systems & AI-Powered Applications
+Software Engineer | Cloud | AI | Distributed Systems
 
-LinkedIn:
-linkedin.com/in/kouiderbakhti
+GitHub
 
-GitHub:
-github.com/kb5321
+```
+https://github.com/kb5321
+```
+
+LinkedIn
+
+```
+https://linkedin.com/in/kouiderbakhti
+```
+
+---
+
+# Final Thought
+
+The AI Business Assistant Platform is more than a software application.
+
+It is an engineering journey, a continuously evolving software platform, and a demonstration of professional software engineering principles applied to real business problems.
+
+Every release aims to improve both the product and the engineer building it.
