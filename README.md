@@ -363,15 +363,18 @@ This project follows professional software engineering practices including:
 
 # Engineering Documentation
 
-Additional documentation is available in the `docs` folder.
+The `docs` folder contains the engineering documentation that guides the design, development, and evolution of the AI Business Assistant Platform.
 
-- PRODUCT_VISION.md
-- ENGINEERING_CHARTER.md
-- ROADMAP.md
-- ARCHITECTURE.md
-- API_GUIDE.md
-- CODING_STANDARDS.md
-- RELEASE_NOTES.md
+| Document | Purpose |
+|----------|---------|
+| `PRODUCT_VISION.md` | Defines the long-term product vision, mission, and business goals. |
+| `ENGINEERING_CHARTER.md` | Establishes the engineering principles and development philosophy followed by the project. |
+| `ROADMAP.md` | Tracks planned features, milestones, and future releases. |
+| `ARCHITECTURE.md` | Documents the system architecture, major components, and design decisions. |
+| `API_GUIDE.md` | Describes the REST API endpoints, request/response models, and integration examples. |
+| `CODING_STANDARDS.md` | Defines coding conventions, project organization, and development best practices. |
+| `RELEASE_NOTES.md` | Records significant changes introduced in each version of the platform. |
+
 
 ---
 
