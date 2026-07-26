@@ -123,34 +123,64 @@ Provide meaningful operational insights.
 
 ### Objectives
 
-Expand intelligent automation.
+Expand intelligent automation and conversational capabilities throughout the platform.
 
 ### Planned Work
 
+### Conversational AI
+
 - Improved AI Receptionist
-- Knowledge Base Integration
 - AI Summaries
 - Semantic Search
 - AI Recommendations
 - Workflow Suggestions
 
----
+### Knowledge
 
-# Version 2.5
+- Knowledge Base Integration
+- Business Knowledge Repository
+- Context-Aware Responses
 
-## Voice AI
-
-### Objectives
-
-Enable voice-based customer engagement.
-
-### Planned Work
+### Voice AI
 
 - Voice Receptionist
 - Call Transcription
 - Call Summaries
 - Voice Appointment Booking
 - AI Call Routing
+
+### Multilingual AI
+
+- English Support
+- French Support
+- Arabic Support
+- Automatic Language Detection
+- Customer Language Preferences
+- Multilingual Conversations
+- Multilingual SMS
+- AI Translation for Staff
+- Right-to-Left (RTL) Support
+
+---
+
+# Version 2.5
+
+## Platform Intelligence
+
+### Objectives
+
+Increase automation, observability, and operational intelligence across the platform.
+
+### Planned Work
+
+- Workflow Automation
+- Business Rules Engine
+- Event Processing
+- Notification Center
+- Customer Journey Tracking
+- AI Workflow Orchestration
+- Performance Monitoring
+- Audit Dashboard
 
 ---
 
