@@ -294,9 +294,9 @@ Security features include:
 
 ---
 
-# 10. AI Receptionist Workflow
+# 10. Conversational AI Workflow
 
-The AI Receptionist supports multi-turn customer conversations and converts natural language into structured CRM records.
+The Conversational AI supports multi-turn customer conversations and converts natural language into structured CRM records.
 
 ```
 Customer Message
@@ -333,7 +333,7 @@ The system extracts and validates:
 - Service Requested
 - Preferred Appointment Time
 
-If required information is missing, the AI Receptionist continues the conversation until sufficient information has been collected.
+If required information is missing, the Conversational AI continues the conversation until sufficient information has been collected.
 
 Conversation history is stored in `chat_messages`.
 
@@ -531,7 +531,7 @@ The architecture directly supports the Version 2.0 roadmap.
 Current capabilities include:
 
 - CRM Core
-- AI Receptionist
+- Conversational AI
 - SMS Integration
 
 Future architectural expansion includes:
