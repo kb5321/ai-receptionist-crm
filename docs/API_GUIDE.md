@@ -179,11 +179,11 @@ Example Response
 
 ---
 
-## AI Receptionist
+## Conversational AI
 
 ### POST /ask
 
-Processes customer conversations through the AI Receptionist.
+Processes customer conversations through the Conversational AI.
 
 ### Request
 
@@ -348,7 +348,7 @@ Lead Creation
 CRM Workflow
 ```
 
-The AI Receptionist supports:
+The Conversational AI supports:
 
 - Multi-turn conversations
 - Context retention
