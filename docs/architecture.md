@@ -1,384 +1,552 @@
-# Architecture
+# Software Architecture
 
-## 1. System Overview
+**Version:** 2.0  
+**Last Updated:** July 26, 2026  
+**Purpose:** Define the technical architecture of the AI Business Assistant Platform and provide a blueprint for current implementation and future evolution.
 
-AI Receptionist CRM is a cloud-hosted customer engagement and workflow automation platform built using FastAPI, PostgreSQL, OpenAI, RingCentral, Docker, and GitHub Actions.
+---
+
+# 1. Architecture Overview
+
+The **AI Business Assistant Platform** is a cloud-native customer engagement and workflow automation platform built using modern software engineering principles.
 
 The platform transforms customer conversations into structured business workflows including lead management, appointment scheduling, client management, SMS communications, and administrative reporting.
 
-The application follows a layered architecture that separates API endpoints, business services, data persistence, and external integrations.
+The architecture follows a layered design that separates presentation, business logic, data persistence, and external integrations. This separation improves maintainability, scalability, testing, and long-term extensibility.
 
 ---
 
-## 2. Technology Stack
+# 2. Architecture Principles
 
-### Backend
+The platform is designed around several core architectural principles.
 
-* Python
-* FastAPI
-* PostgreSQL
+## Separation of Concerns
 
-### AI
+Business logic, presentation, persistence, and external integrations are organized into independent layers.
 
-* OpenAI API
-* Conversational AI
-* Semantic Information Extraction
+## Modular Design
 
-### Communications
+Features are implemented as reusable modules that encourage maintainability and future expansion.
 
-* RingCentral SMS API
+## API-First Development
 
-### DevOps
+Business functionality is exposed through REST APIs that support multiple user interfaces and future integrations.
 
-* Docker
-* Docker Compose
-* GitHub Actions
+## Security by Design
 
-### Testing
+Authentication, authorization, audit logging, and secure configuration are integrated throughout the application.
 
-* Pytest
-* Unit Tests
-* Integration Tests
+## Scalability
+
+The architecture is designed to support future growth including additional AI services, multilingual capabilities, Voice AI, and Software-as-a-Service (SaaS) deployment.
+
+## Cloud Ready
+
+Containerization and CI/CD provide consistent deployment across development, testing, and production environments.
 
 ---
 
-## 3. Application Layers
+# 3. Technology Stack
 
-The application is organized into multiple layers:
+## Backend
 
-### Presentation Layer
+- Python
+- FastAPI
+- PostgreSQL
+
+## Artificial Intelligence
+
+- OpenAI API
+- Conversational AI
+- Semantic Information Extraction
+
+## Communications
+
+- RingCentral SMS API
+
+## DevOps
+
+- Docker
+- Docker Compose
+- GitHub Actions
+
+## Testing
+
+- Pytest
+- Unit Testing
+- Integration Testing
+
+---
+
+# 4. Technology Decisions
+
+## FastAPI
+
+Selected for its high performance, asynchronous capabilities, automatic OpenAPI documentation, dependency injection support, and modern Python development experience.
+
+## PostgreSQL
+
+Provides a reliable relational database with transactional integrity, scalability, and strong SQL support.
+
+## OpenAI
+
+Provides advanced natural language understanding, conversational AI, and intelligent information extraction.
+
+## Docker
+
+Ensures consistent environments across development, testing, and production deployments.
+
+## GitHub Actions
+
+Automates testing, validation, and deployment workflows.
+
+---
+
+# 5. Logical Architecture
+
+The application is organized into multiple logical layers.
+
+## Presentation Layer
 
 Handles HTTP requests and responses.
 
 Examples:
 
-* routers/client.py
-* routers/admin.py
-* routers/leads.py
+- routers/client.py
+- routers/admin.py
+- routers/leads.py
 
-### Service Layer
+Responsibilities:
+
+- API endpoints
+- Request validation
+- Authentication
+- Response generation
+
+---
+
+## Service Layer
 
 Contains business logic.
 
 Examples:
 
-* services/client_service.py
-* services/lead_service.py
-* services/sms_service.py
+- services/client_service.py
+- services/lead_service.py
+- services/sms_service.py
 
-### Data Layer
+Responsibilities:
+
+- Business rules
+- Workflow orchestration
+- AI processing
+- Validation
+
+---
+
+## Data Layer
 
 Responsible for PostgreSQL access.
 
 Examples:
 
-* database.py
-* SQL queries
-* Repository-style operations
+- database.py
+- SQL queries
+- Repository-style operations
 
-### External Services
+Responsibilities:
 
-Third-party integrations:
-
-* OpenAI API
-* RingCentral SMS API
+- Data persistence
+- CRUD operations
+- Database transactions
 
 ---
 
-## 4. Database Design
+## External Services
 
-Primary tables:
+Third-party integrations.
 
-### clients
+- OpenAI API
+- RingCentral SMS API
+
+Responsibilities:
+
+- Conversational AI
+- SMS delivery
+- External communications
+
+---
+
+# 6. Current System Architecture
+
+```
+                Customer
+                    │
+                    ▼
+          Web Chat Interface
+                    │
+                    ▼
+              FastAPI Routers
+                    │
+                    ▼
+             Business Services
+                    │
+        ┌───────────┴───────────┐
+        ▼                       ▼
+ PostgreSQL Database      External APIs
+                                │
+                ┌───────────────┴───────────────┐
+                ▼                               ▼
+          OpenAI API                   RingCentral API
+```
+
+---
+
+# 7. Repository Structure
+
+```
+project/
+
+├── routers/
+├── services/
+├── tests/
+├── docs/
+├── scripts/
+├── screenshots/
+├── docker/
+├── .github/
+├── database.py
+├── config.py
+├── auth.py
+├── main.py
+└── requirements.txt
+```
+
+The repository follows a modular organization that separates application concerns while remaining easy to navigate.
+
+---
+
+# 8. Database Design
+
+Primary application tables.
+
+## clients
 
 Stores customer information.
 
-### appointments
+## appointments
 
 Stores appointment records.
 
-### spa_leads
+## spa_leads
 
 Stores leads generated by AI conversations.
 
-### sms_messages
+## sms_messages
 
 Stores inbound and outbound SMS history.
 
-### client_notes
+## client_notes
 
 Stores internal client notes.
 
-### admin_users
+## admin_users
 
 Stores administrator accounts and roles.
 
-### audit_log
+## audit_log
 
-Stores security and activity events.
+Stores authentication and security events.
 
-### chat_messages
+## chat_messages
 
 Stores AI conversation history.
 
 ---
 
-## 5. Authentication Flow
+# 9. Authentication Flow
 
-1. User submits credentials.
-2. Credentials are validated against admin_users.
-3. Password hash is verified.
-4. Authentication cookie is created.
-5. Protected routes require authentication.
-6. Role checks are enforced where necessary.
+```
+User Login
+      │
+      ▼
+Credential Validation
+      │
+      ▼
+Password Verification
+      │
+      ▼
+Session Cookie Created
+      │
+      ▼
+Protected Route Access
+      │
+      ▼
+Role Authorization
+```
 
 Security features include:
 
-* Password hashing
-* Session cookies
-* Role-based authorization
-* Audit logging
+- Password hashing
+- Secure session cookies
+- Role-based authorization
+- Audit logging
 
 ---
 
-## 6. AI Receptionist Flow
+# 10. AI Receptionist Workflow
 
-The AI Receptionist supports multi-turn customer conversations and converts natural language requests into structured CRM records.
+The AI Receptionist supports multi-turn customer conversations and converts natural language into structured CRM records.
 
-Workflow:
-
+```
 Customer Message
-↓
-Conversation History Retrieval
-↓
+        │
+        ▼
+Conversation History
+        │
+        ▼
 OpenAI Processing
-↓
+        │
+        ▼
 Intent Detection
-↓
+        │
+        ▼
 Information Extraction
-↓
-Data Validation
-↓
+        │
+        ▼
+Validation
+        │
+        ▼
 Missing Information Collection
-↓
+        │
+        ▼
 Lead Creation
-↓
+        │
+        ▼
 CRM Workflow
+```
 
 The system extracts and validates:
 
-* Client Name
-* Phone Number
-* Service Requested
-* Preferred Appointment Time
+- Client Name
+- Phone Number
+- Service Requested
+- Preferred Appointment Time
 
-If required information is missing, the AI Receptionist automatically requests the missing details and continues the conversation until sufficient information is collected.
+If required information is missing, the AI Receptionist continues the conversation until sufficient information has been collected.
 
-Conversation history is stored in the `chat_messages` table and is used to maintain context across multiple interactions.
+Conversation history is stored in `chat_messages`.
 
-Validated leads are stored in `spa_leads` and can later be converted into appointments and client records.
-
+Validated leads are stored in `spa_leads`.
 
 ---
 
-## 7. Conversational Lead Capture Workflow
-
-The platform supports conversation-driven lead capture.
+# 11. Conversational Lead Capture
 
 Example workflow:
 
-Customer:
-"I need a massage appointment for July 31 afternoon."
+```
+Customer
+"I need a massage appointment for July 31."
 
-AI Receptionist:
-Requests missing phone number.
+        │
 
-Customer:
-Provides phone number.
+AI
+Requests phone number.
 
-AI Receptionist:
-Requests customer name.
-
-Customer:
-Provides name.
-
-AI Receptionist:
-Validates collected information and automatically creates a CRM lead record.
-
-This workflow enables the platform to collect business data incrementally while maintaining a natural conversational experience.
-
-
-
----
-
-## 8. SMS Flow
-
-Administrator
-↓
-Send SMS
-↓
-RingCentral API
-↓
-SMS Delivery
-↓
-Message Logging
-
-Each message is stored in sms_messages with:
-
-* Status
-* Direction
-* Timestamp
-* RingCentral Message ID
-
----
-
-## 9. Deployment Architecture
-
-## High-Level System Diagram
+        │
 
 Customer
-↓
-Web Chat Interface
-↓
-FastAPI Application
-↓
-OpenAI API
-↓
-Information Extraction & Validation
-↓
-PostgreSQL Database
+Provides phone number.
 
-Administrative Users
-↓
-CRM Dashboard
-↓
-Clients / Leads / Appointments
-↓
-RingCentral SMS API
-↓
-Customer Communications
+        │
 
-### Explanation
+AI
+Requests customer name.
 
-The customer interacts with the AI Receptionist through the web chat interface. Customer messages are processed by the FastAPI application and analyzed using OpenAI. Extracted and validated information is stored in PostgreSQL and becomes available within the CRM dashboard. Administrators can manage customer records and communicate with customers through RingCentral SMS integration.
+        │
+
+Customer
+Provides name.
+
+        │
+
+AI
+Creates CRM Lead
+```
+
+The workflow enables conversational data collection while maintaining a natural customer experience.
 
 ---
 
-## Development Environment
+# 12. SMS Workflow
 
-The AI Receptionist CRM was developed using Docker, FastAPI, and PostgreSQL.
+```
+Administrator
+        │
+        ▼
+Send SMS
+        │
+        ▼
+RingCentral API
+        │
+        ▼
+SMS Delivery
+        │
+        ▼
+Message Logging
+```
 
+Each SMS record stores:
+
+- Status
+- Direction
+- Timestamp
+- RingCentral Message ID
+
+---
+
+# 13. Development Environment
+
+The development environment uses Docker to provide consistency across developer workstations.
+
+```
 Developer Workstation
-↓
+        │
+        ▼
 Docker Compose
-↓
-Starts Application Containers
-↓
-FastAPI Container + PostgreSQL Container
+        │
+        ▼
+─────────────────────────────
+│                           │
+▼                           ▼
+FastAPI Container     PostgreSQL Container
+```
 
-### Components
+Startup process:
 
-**Developer Workstation**
+1. Developer opens the project.
+2. Docker Compose loads configuration.
+3. FastAPI container starts.
+4. PostgreSQL container starts.
+5. Database connection is established.
+6. Application becomes available.
 
-The developer's computer where the source code is written, tested, and maintained.
+---
 
-**Docker Compose**
+# 14. CI/CD Pipeline
 
-Docker Compose is used to start and manage the containers required by the application.
-
-**FastAPI Container**
-
-The FastAPI container hosts the CRM application, API endpoints, authentication system, AI receptionist, and administrative dashboards.
-
-**PostgreSQL Container**
-
-The PostgreSQL container stores application data including clients, leads, appointments, SMS history, notes, audit logs, and conversation history.
-
-### Startup Process
-
-1. The developer opens the project on the workstation.
-2. Docker Compose reads the `docker-compose.yml` configuration file.
-3. Docker Compose starts the FastAPI container.
-4. Docker Compose starts the PostgreSQL container.
-5. FastAPI establishes a connection to PostgreSQL.
-6. The CRM application becomes available through a web browser.
-
-### Development Environment Diagram
-
-Developer Workstation
-↓
-Docker Compose
-↓
-Starts FastAPI Container
-↓
-Starts PostgreSQL Container
-↓
-FastAPI Connects to PostgreSQL
-↓
-CRM Application Available
-
-### Container Relationship
-
-Docker Compose
-├── FastAPI Container
-└── PostgreSQL Container
-
-The FastAPI and PostgreSQL containers run independently and communicate through a Docker network. This architecture simplifies local development and mirrors cloud deployment environments.
-
-
-----
-## CI/CD Pipeline
-
+```
 GitHub Repository
-↓
+        │
+        ▼
 GitHub Actions
-↓
+        │
+        ▼
 Automated Testing
-↓
+        │
+        ▼
 Build Validation
-↓
+        │
+        ▼
 Deployment Workflow
+```
+
+Continuous Integration ensures that every code change is automatically validated before deployment.
 
 ---
 
-## Cloud Deployment
+# 15. Cloud Deployment
 
-Current deployment environment:
+Current deployment targets include:
 
-* Microsoft Azure App Service
-* Azure PostgreSQL Database
+- Microsoft Azure App Service
+- Azure PostgreSQL Database
 
-The platform is containerized using Docker and supports automated deployment workflows through GitHub Actions.
+Containerization enables consistent deployments across development, staging, and production.
 
-The architecture is designed to support future expansion into multi-location deployments, SaaS hosting models, and additional AI-powered services.
-
----
-
+The platform is designed for future expansion into multi-location deployments and SaaS hosting.
 
 ---
 
-## 10. Future Roadmap
+# 16. Target Architecture
 
-### Phase 1
+Future versions of the platform will introduce additional architectural capabilities.
 
-* CRM Core
-* AI Receptionist
-* SMS Integration
+Planned enhancements include:
 
-### Phase 2
+- Repository Pattern
+- Dependency Injection
+- Redis Caching
+- Background Workers
+- Event Processing
+- Knowledge Base Integration
+- Voice AI
+- Multilingual AI
+- Semantic Search
+- AI Recommendations
 
-* React Front-End
-* Modern Dashboard UI
-* Enhanced Reporting
+---
 
-### Phase 3
+# 17. Architectural Evolution
 
-* Voice AI Receptionist
-* Call Transcription
-* Semantic Client Profiles
+```
+Version 1.x
+Traditional CRM
+        │
+        ▼
+Version 2.0
+Layered AI Business Platform
+        │
+        ▼
+Version 2.x
+Intelligent Business Automation
+        │
+        ▼
+Version 3.x
+Multi-Tenant SaaS Platform
+```
 
-### Phase 4
+The architecture is intentionally designed to evolve incrementally while preserving maintainability and backward compatibility.
 
-* SpaRes AI
-* Multi-Location SaaS Platform
-* Commercial Deployment
+---
+
+# 18. Architectural Assumptions
+
+The current architecture assumes:
+
+- PostgreSQL remains the primary transactional database.
+- REST APIs remain the primary integration mechanism.
+- OpenAI provides conversational intelligence.
+- Docker is the standard local development environment.
+- GitHub Actions provides CI/CD automation.
+- Azure remains the primary cloud deployment target.
+
+---
+
+# 19. Future Roadmap Alignment
+
+The architecture directly supports the Version 2.0 roadmap.
+
+Current capabilities include:
+
+- CRM Core
+- AI Receptionist
+- SMS Integration
+
+Future architectural expansion includes:
+
+- React Front-End
+- Voice AI
+- Multilingual AI
+- Business Intelligence
+- Multi-Tenant SaaS
+- Commercial Cloud Deployment
+
+---
+
+# Conclusion
+
+The AI Business Assistant Platform follows a modular, layered architecture designed to balance maintainability, scalability, and intelligent automation.
+
+The architecture establishes a strong engineering foundation while remaining flexible enough to support future AI capabilities, multilingual communication, Voice AI, cloud-native deployment, and Software-as-a-Service expansion.
