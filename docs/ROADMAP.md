@@ -129,7 +129,7 @@ Expand intelligent automation and conversational capabilities throughout the pla
 
 ### Conversational AI
 
-- Improved AI Receptionist
+- Improved Conversational AI
 - AI Summaries
 - Semantic Search
 - AI Recommendations
@@ -143,11 +143,11 @@ Expand intelligent automation and conversational capabilities throughout the pla
 
 ### Voice AI
 
-- Voice Receptionist
-- Call Transcription
-- Call Summaries
-- Voice Appointment Booking
-- AI Call Routing
+- Real-time Voice Conversations
+- Speech-to-Text
+- Text-to-Speech
+- Voice Assistant
+- Voice Call Integration
 
 ### Multilingual AI
 

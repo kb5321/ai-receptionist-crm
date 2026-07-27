@@ -130,7 +130,7 @@ Every improvement should make the platform easier—not harder—to maintain.
 
 Current modules include:
 
-- AI Receptionist
+- Conversational AI
 - Customer Relationship Management (CRM)
 - Appointment Management
 - SMS Communications
@@ -139,7 +139,7 @@ Current modules include:
 
 Future modules may include:
 
-- Voice AI Receptionist
+- Voice Conversational AI
 - Knowledge Base
 - Reporting & Analytics
 - Marketing Automation
